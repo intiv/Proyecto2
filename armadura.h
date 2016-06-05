@@ -7,9 +7,12 @@ class armadura{
  protected:
 	double defense;
 	string atribute;
- private:
-	armadura();
-	armadura(double,string);	
-	string toString();
+ public:
+	armadura(string, double=100.0);
+	string getAtribute()const;
+	void setAtribute(const string&);
+	void setDefense(double&);
+	double getDefense()const;	
+	virtual string toString()=0;
 	
 };

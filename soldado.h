@@ -13,18 +13,17 @@ class soldado{
 	armadura armor;
 	double hp;
 	bool alive;
-	~soldado();
- private:
-	soldado(armadura,double=500.0);
+ public:
+	soldado(const arma&,const armadura&,double=500.0);
 	soldado(const soldado&);
-	const arma& equip(const arma&,int);
-	void setArmor(const armadura&);
+	void equip(const arma&);
+	void equip(const armadura&);
 	void setAlive(bool);
-	arma& getWeapon()const;
-	armadura& getArmor()const;
+	const arma& getWeapon()const;
+	const armadura& getArmor()const;
 	double getHP();
 	bool isAlive()const;
 	virtual void atacar(soldado&)=0;
-	string toString();
+	virtual string toString()=0;
 	
 };

@@ -7,11 +7,10 @@ class arma{
  protected:
 	double damage;
 	string atribute;
- private:
-	arma();
+ public:
 	arma(string,double=100.0);
 	double getDamage();
 	string getAtribute();
-	string toString();
+	virtual string toString()=0;
 
 };
