@@ -5,19 +5,24 @@
 
 using std::string;
 	
-soldado::soldado(const arma& weapon,const armadura& armor,double& hp):weapon(weapon),armor(armor),{
-	
+soldado::soldado(string name,onst arma& weapon,const armadura& armor,double& hp):name(name),weapon(weapon),armor(armor),{
 	if(hp>0.0&&hp<5000.0){
 		this->hp=hp;
 	}else{
 		this->hp=500.0;
 	}
+	this->currHP=this->hp;
+	this->alive=true;
+	
 }
 
 soldado::soldado(const soldado& s){
 	this->hp=s.hp;
+	this->currHP=s.currHP;
+	this->name=s.name;
+	this->Class=s.Class;
 	this->armor=s.armor;
-	this->weapons=s.weapons;
+	this->weapon=s.weapon;
 }
 
 void soldado::equip(const arma& nWeapon){
@@ -32,6 +37,10 @@ void soldado::setAlive(bool nAlive){
 	this->alive=nAlive;
 }
 
+void soldado::setCurrHP(double& nHP){
+	this->currHP=nHP;
+}
+
 const arma& soldado::getWeapon()const{
 	return this->weapon;
 }
@@ -44,7 +53,19 @@ bool soldado::isAlive()const{
 	return this->alive;
 }
 
-virtual void soldado::atacar(soldado&)=0;
+double getHP()const{
+	return this->hp;
+}
+
+string getName()const{
+	return this->name;
+}
+
+string getClass()const{
+	return this->Class;
+}
+
+virtual void soldado::atacar(soldado& s)=0;
 
 virtual string soldado::toString()=0;
 
