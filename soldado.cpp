@@ -53,19 +53,19 @@ bool soldado::isAlive()const{
 	return this->alive;
 }
 
-double getHP()const{
+double soldado::getHP()const{
 	return this->hp;
 }
 
-string getName()const{
+string soldado::getName()const{
 	return this->name;
 }
 
-string getClass()const{
+string soldado::getClass()const{
 	return this->Class;
 }
 
 virtual void soldado::atacar(soldado& s)=0;
 
-virtual string soldado::toString()=0;
+virtual string soldado::toString()const=0;
 

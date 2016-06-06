@@ -7,8 +7,7 @@ class arma{
  protected:
 	double damage;
 	string atribute;
-	int durability;
-	bool frozen, burned;
+	int durability, currDur;
  public:
 	arma(string,double=100.0);
 	double getDamage()const;
@@ -17,7 +16,7 @@ class arma{
 	void setAtribute(string&);
 	int getDurability()const;
 	void setDurability();
+	void setCurrDur(int&);
+	int getCurrDur()const;
 	virtual string toString()const=0;
-	bool isFrozen()const;
-	void setFrozen(bool);
 };

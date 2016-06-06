@@ -11,7 +11,7 @@ class soldado{
 	arma weapona;
 	armadura armor;
 	double hp, currHP;
-	bool alive;
+	bool alive, frozen, burned;
  public:
 	soldado(string, const arma&,const armadura&,double&=500.0);
 	soldado(const soldado&);
@@ -27,5 +27,5 @@ class soldado{
 	double getCurrHP()const;
 	bool isAlive()const;
 	virtual void atacar(soldado&)=0;
-	virtual string toString()=0;	
+	virtual string toString()const=0;	
 };
