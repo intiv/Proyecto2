@@ -1,6 +1,8 @@
 #include "arma.h"
 #include<string>
+#include<sstream>
 
+using std::stringstream;
 using std::string;
 
 arma::arma(string atribute,double damage):atribute(atribute){
@@ -9,6 +11,8 @@ arma::arma(string atribute,double damage):atribute(atribute){
 	}else{
 		this->damage=150.0;
 	}
+	this->durability=100;
+	this->currDur=100;
 }
 
 double arma::getDamage()const{ 
@@ -40,5 +44,8 @@ void arma::setAtribute(string& nAtr){
 	this->atribute=nAtr;
 }
 
-virtual string arma::toString()const=0;
-
+string arma::toString()const{
+	stringstream ss;
+	ss<<"Arma "<<damage<<" "<<atribute<<" "<<durability<<" "<<currDur;
+	return ss.str();
+}

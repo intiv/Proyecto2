@@ -18,5 +18,5 @@ class arma{
 	void setDurability();
 	void setCurrDur(int&);
 	int getCurrDur()const;
-	virtual string toString()const=0;
+	virtual string toString()const;
 };

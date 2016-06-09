@@ -2,10 +2,10 @@
 #include "arma.h"
 #include "armadura.h"
 #include<string>
-
+#include<sstream>
 using std::string;
-	
-soldado::soldado(string name,onst arma& weapon,const armadura& armor,double& hp):name(name),weapon(weapon),armor(armor),{
+using std::stringstream;	
+soldado::soldado(string name,const arma& weapon,const armadura& armor,double hp):name(name),weapon(weapon),armor(armor){
 	if(hp>0.0&&hp<5000.0){
 		this->hp=hp;
 	}else{
@@ -16,13 +16,8 @@ soldado::soldado(string name,onst arma& weapon,const armadura& armor,double& hp)
 	
 }
 
-soldado::soldado(const soldado& s){
-	this->hp=s.hp;
-	this->currHP=s.currHP;
-	this->name=s.name;
-	this->Class=s.Class;
-	this->armor=s.armor;
-	this->weapon=s.weapon;
+soldado::~soldado(){
+	
 }
 
 void soldado::equip(const arma& nWeapon){
@@ -61,11 +56,10 @@ string soldado::getName()const{
 	return this->name;
 }
 
-string soldado::getClass()const{
-	return this->Class;
+string soldado::toString(){
+	stringstream ss;
+	ss<<"Soldado "<<name<<" "<<hp<<" "<<currHP<<" \narma: "<<weapon.toString();
+	ss<<"\narmadura: "<<armor.toString();
+	return ss.str();
 }
-
-virtual void soldado::atacar(soldado& s)=0;
-
-virtual string soldado::toString()const=0;
 

@@ -7,14 +7,14 @@ using std::string;
 
 class soldado{
  protected:
-	string name, Class;
-	arma weapona;
+	string name;
+	arma weapon;
 	armadura armor;
 	double hp, currHP;
 	bool alive, frozen, burned;
  public:
-	soldado(string, const arma&,const armadura&,double&=500.0);
-	soldado(const soldado&);
+	soldado(string, const arma&,const armadura&,double=500.0);
+	virtual ~soldado();
 	void equip(const arma&);
 	void equip(const armadura&);
 	void setAlive(bool);
@@ -22,10 +22,10 @@ class soldado{
 	const armadura& getArmor()const;
 	double getHP()const;
 	string getName()const;
-	string getClass()const;
-	void setCurrHP(unsigned double&);
+	void setCurrHP(double&);
 	double getCurrHP()const;
 	bool isAlive()const;
-	virtual void atacar(soldado&)=0;
-	virtual string toString()const=0;	
+	string toString();
+	/*virtual void atacar(soldado&)=0;
+	virtual string toString()const=0;*/
 };
