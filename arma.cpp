@@ -19,7 +19,7 @@ double arma::getDamage()const{
 	return this->damage;
 }
 
-void arma::setCurrDur(int& nDur){
+void arma::setCurrDur(int nDur){
 	this->currDur=nDur;
 }
 
@@ -34,18 +34,18 @@ int arma::getDurability()const{
 	return this->durability;
 }
 
-void arma::setDamage(double& nDmg){
+void arma::setDamage(double nDmg){
 	if(nDmg>0&&nDmg<500){
 		this->damage=nDmg;
 	}
 }
 
-void arma::setAtribute(string& nAtr){
+void arma::setAtribute(string nAtr){
 	this->atribute=nAtr;
 }
-
+/*
 string arma::toString()const{
 	stringstream ss;
 	ss<<"Arma "<<damage<<" "<<atribute<<" "<<durability<<" "<<currDur;
 	return ss.str();
-}
+}*/

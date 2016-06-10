@@ -7,11 +7,31 @@
 using std::string;
 using std::stringstream;
 
-mago::mago(string name, const magia& magic,const armadura& armor,double& hp):soldado(name,magic,armor,hp){
+mago::mago(string name,arma* magic,armadura* armor,double hp):soldado(name,magic,armor,hp){
 }
 
-mago::mago(const mago& m){
-	this->name=n.name;
-	this->arma->m.arma;
+mago::~mago(){
+
 }
 
+void mago::atacar(soldado* enemy){
+
+}
+
+/*
+mago::mago(soldado* m){
+	this->name=m->getName();
+	this->weapon=m->getWeapon();
+	this->armor=m->getArmor();
+	this->hp=m->getHP();
+	this->currHP=m->getCurrHP();
+	this->alive=m->isAlive();
+	this->frozen=m->isFrozen();
+	this->burned=m->isBurned();
+}*/
+
+string mago::toString()const{
+	stringstream ss;
+	ss<<name<<"- Mago: "<<currHP<<" HP \n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
+	return ss.str();
+}

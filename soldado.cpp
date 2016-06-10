@@ -5,7 +5,7 @@
 #include<sstream>
 using std::string;
 using std::stringstream;	
-soldado::soldado(string name,const arma& weapon,const armadura& armor,double hp):name(name),weapon(weapon),armor(armor){
+soldado::soldado(string name,arma* weapon,armadura* armor,double hp):name(name),weapon(weapon),armor(armor){
 	if(hp>0.0&&hp<5000.0){
 		this->hp=hp;
 	}else{
@@ -13,39 +13,51 @@ soldado::soldado(string name,const arma& weapon,const armadura& armor,double hp)
 	}
 	this->currHP=this->hp;
 	this->alive=true;
+	this->frozen=false;
+	this->burned=false;
 	
 }
 
 soldado::~soldado(){
-	
-}
-
-void soldado::equip(const arma& nWeapon){
-	this->weapon=nWeapon;
-}
-
-void soldado::equip(const armadura& nArmor){
-	this->armor=nArmor;
+	delete this->weapon;
+	delete this->armor;
+	delete this;	
 }
 
 void soldado::setAlive(bool nAlive){
 	this->alive=nAlive;
 }
 
-void soldado::setCurrHP(double& nHP){
+void soldado::setCurrHP(double nHP){
 	this->currHP=nHP;
 }
 
-const arma& soldado::getWeapon()const{
+arma* soldado::getWeapon()const{
 	return this->weapon;
 }
 
-const armadura& soldado::getArmor()const{
+armadura* soldado::getArmor()const{
 	return this->armor;
 }
 
 bool soldado::isAlive()const{
 	return this->alive;
+}
+
+bool soldado::isFrozen()const{
+	return this->frozen;
+}
+
+bool soldado::isBurned()const{
+	return this->burned;
+}
+
+void soldado::Freeze(bool flag){
+	this->frozen=flag;
+}
+
+void soldado::Burn(bool flag){
+	this->burned=flag;
 }
 
 double soldado::getHP()const{
@@ -55,11 +67,11 @@ double soldado::getHP()const{
 string soldado::getName()const{
 	return this->name;
 }
-
+/*
 string soldado::toString(){
 	stringstream ss;
-	ss<<"Soldado "<<name<<" "<<hp<<" "<<currHP<<" \narma: "<<weapon.toString();
+	ss<<"Soldado "<<name<<" "<<hp<<" "<<currHP<<" \narma: "<<weapon->toString();
 	ss<<"\narmadura: "<<armor.toString();
 	return ss.str();
-}
+}*/
 

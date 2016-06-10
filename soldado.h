@@ -6,26 +6,27 @@
 using std::string;
 
 class soldado{
- protected:
+  protected:
+	virtual ~soldado();
 	string name;
-	arma weapon;
-	armadura armor;
+	arma* weapon;
+	armadura* armor;
 	double hp, currHP;
 	bool alive, frozen, burned;
- public:
-	soldado(string, const arma&,const armadura&,double=500.0);
-	virtual ~soldado();
-	void equip(const arma&);
-	void equip(const armadura&);
+  public:
+	soldado(string, arma*,armadura*,double=500.0);
 	void setAlive(bool);
-	const arma& getWeapon()const;
-	const armadura& getArmor()const;
+	arma* getWeapon()const;
+	armadura* getArmor()const;
 	double getHP()const;
 	string getName()const;
-	void setCurrHP(double&);
+	void setCurrHP(double);
 	double getCurrHP()const;
 	bool isAlive()const;
-	string toString();
-	/*virtual void atacar(soldado&)=0;
-	virtual string toString()const=0;*/
+	bool isFrozen()const;
+	bool isBurned()const;
+	void Freeze(bool);
+	void Burn(bool);
+	virtual void atacar(soldado*)=0;
+	virtual string toString()const=0;
 };

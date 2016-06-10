@@ -11,12 +11,12 @@ class arma{
  public:
 	arma(string,double=100.0);
 	double getDamage()const;
-	void setDamage(double&);
+	void setDamage(double);
 	string getAtribute()const;
-	void setAtribute(string&);
+	void setAtribute(string);
 	int getDurability()const;
-	void setDurability();
-	void setCurrDur(int&);
+	void setDurability(int);
+	void setCurrDur(int);
 	int getCurrDur()const;
-	virtual string toString()const;
+	virtual string toString()const=0;
 };
