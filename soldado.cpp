@@ -3,6 +3,8 @@
 #include "armadura.h"
 #include<string>
 #include<sstream>
+#include<iostream>
+
 using std::string;
 using std::stringstream;	
 soldado::soldado(string name,arma* weapon,armadura* armor,double hp):name(name),weapon(weapon),armor(armor){
@@ -19,9 +21,10 @@ soldado::soldado(string name,arma* weapon,armadura* armor,double hp):name(name),
 }
 
 soldado::~soldado(){
+	std::cout<<"Destruyendo soldado "<<this->name<<"..."<<std::endl;
 	delete this->weapon;
 	delete this->armor;
-	delete this;	
+	std::cout<<"Destruido con exito!"<<std::endl;
 }
 
 void soldado::setAlive(bool nAlive){

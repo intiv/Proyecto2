@@ -30,8 +30,7 @@ int main(int argc, char* argv[]){
 	}
 	soldado* hola=new mago("Soren",weap,arm,500);
 	cout<<endl<<hola->toString()<<endl;
-	delete weap;
-	delete arm;
+	delete hola;
 	weap=NULL;
 	arm=NULL;
 	return 0;

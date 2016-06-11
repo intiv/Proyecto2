@@ -7,13 +7,13 @@ using std::string;
 
 class soldado{
   protected:
-	virtual ~soldado();
 	string name;
 	arma* weapon;
 	armadura* armor;
 	double hp, currHP;
 	bool alive, frozen, burned;
   public:
+	virtual ~soldado();
 	soldado(string, arma*,armadura*,double=500.0);
 	void setAlive(bool);
 	arma* getWeapon()const;

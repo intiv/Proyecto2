@@ -18,5 +18,5 @@ class armadura{
 	int getCurrDur()const;
 	void setCurrDur(int);
 	void setDur(int);
-	virtual string toString()const;
+	virtual string toString()const=0;
 };

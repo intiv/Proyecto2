@@ -50,9 +50,9 @@ int armadura::getCurrDur()const{
 void armadura::setCurrDur(int nDur){
 	this->currDur=nDur;
 }
-
+/*
 string armadura::toString()const{
 	stringstream ss;
 	ss<<"Armadura "<<defense<<" "<<atribute<<" "<<durability<<" "<<currDur;
 	return ss.str();
-}
+}*/
