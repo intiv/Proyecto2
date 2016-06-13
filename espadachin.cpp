@@ -19,7 +19,7 @@ void espadachin::atacar(soldado* enemy){
 
 string espadachin::toString()const{
 	stringstream ss;
-	ss<<name<<" - Espadachin: "<<currhp<<"/"<<hp<<" HP";
-	ss<<"\n\t"<<weapon->tostring()<<"\n\t"<<armor->toString();
+	ss<<name<<" - Espadachin: "<<currHP<<"/"<<hp<<" HP";
+	ss<<"\n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
 	return ss.str();
 }

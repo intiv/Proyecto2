@@ -11,6 +11,7 @@ lanza::lanza(string atribute,double damage):arma(atribute,damage){
 
 string lanza::toString()const{
 	stringstream ss;
-	ss<<"Lanza: Atributo "<<this->atribute<<", Ataque "<<this->damage;
+	ss<<"Lanza: Atributo "<<this->atribute<<", Ataque "<<this->damage<<", "<<currDur<<"/"<<durability<<" durabilidad";
+
 	return ss.str();
 }

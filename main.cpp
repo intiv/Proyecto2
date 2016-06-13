@@ -6,6 +6,9 @@
 #include "magia.h"
 #include "robe.h"
 #include "mago.h"
+#include "ligera.h"
+#include "lancero.h"
+#include "espadachin.h"
 #include<iostream>
 
 using namespace std;
@@ -31,7 +34,18 @@ int main(int argc, char* argv[]){
 	soldado* hola=new mago("Soren",weap,arm,500);
 	cout<<endl<<hola->toString()<<endl;
 	delete hola;
-	weap=NULL;
+	weap=new espada("na",100);
+	arm=new ligera("na",100);
+	hola=new espadachin("Edward",weap,arm,500);
+	cout<<endl<<hola->toString()<<endl;
+	delete hola;
+	weap=new lanza("hielo",200);
+	arm=new ligera("trueno",200);
+	hola=new lancero("Aran",weap,arm,1200);
+	cout<<endl<<hola->toString()<<endl;
+	delete hola;
 	arm=NULL;
+	weap=NULL;
+	hola=NULL;
 	return 0;
 }

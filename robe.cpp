@@ -11,6 +11,6 @@ robe::robe(string atribute,double defense):armadura(atribute,defense){
 
 string robe::toString()const{
 	stringstream ss;
-	ss<<"Tunica: Atributo "<<this->atribute<<", Defensa "<<this->defense;
+	ss<<"Tunica: Atributo "<<this->atribute<<", Defensa "<<this->defense<<", "<<currDur<<"/"<<durability<<" durabilidad";
 	return ss.str();
 }

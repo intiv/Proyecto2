@@ -1,11 +1,20 @@
-guerra:	arma.o armadura.o soldado.o lanza.o espada.o magia.o robe.o mago.o main.o
-	g++ arma.cpp armadura.o soldado.o lanza.o espada.o magia.o robe.o mago.o main.cpp -o guerra
+guerra:	arma.o armadura.o soldado.o lanza.o espada.o magia.o robe.o ligera.o mago.o espadachin.o lancero.o main.o
+	g++ arma.cpp armadura.o soldado.o lanza.o espada.o magia.o robe.o ligera.o mago.o espadachin.o lancero.o main.cpp -o guerra
 
-main.o:	main.cpp arma.h armadura.h
+main.o:	main.cpp arma.h armadura.h soldado.h lancero.h espadachin.h mago.h ligera.h robe.h magia.h espada.h lanza.h 
 	g++ -c main.cpp
+
+lancero.o:	lancero.cpp lancero.h soldado.h
+	g++ -c lancero.cpp
+
+espadachin.o:	espadachin.cpp espadachin.h soldado.h
+	g++ -c espadachin.cpp
 
 mago.o:	mago.cpp mago.h soldado.h
 	g++ -c mago.cpp
+
+ligera.o:	ligera.cpp ligera.h armadura.h
+	g++ -c ligera.cpp
 
 robe.o:	robe.cpp robe.h armadura.h
 	g++ -c robe.cpp
@@ -27,3 +36,6 @@ armadura.o:	armadura.cpp armadura.h
 
 arma.o:	arma.cpp arma.h
 	g++ -c arma.cpp
+
+clean:
+	rm -f *.o guerra
