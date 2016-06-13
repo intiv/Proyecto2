@@ -1,3 +1,4 @@
+#pragma once
 #include "armadura.h"
 #include<string>
 using std::string;
