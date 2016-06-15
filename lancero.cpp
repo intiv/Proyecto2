@@ -21,6 +21,6 @@ void lancero::atacar(soldado* enemy){
 string lancero::toString()const{
 	stringstream ss;
 	ss<<name<<" - Lancero: "<<currHP<<"/"<<hp<<" HP";
-	ss<<"\n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
+	//ss<<"\n\t\t\t\t\t\t\t\t\t"<<weapon->toString()<<"\n\t\t\t\t\t\t\t\t\t"<<armor->toString();
 	return ss.str();
 }

@@ -14,12 +14,15 @@ espadachin::~espadachin(){
 }
 
 void espadachin::atacar(soldado* enemy){
-	
+	double dmg=this->weapon->getDamage();
+	if(this->weapon->getAtribute().compare("Light")==0){
+		dmg-=((enemy->getArmor()->getDefense())*0.75);
+	}
 }
 
 string espadachin::toString()const{
 	stringstream ss;
 	ss<<name<<" - Espadachin: "<<currHP<<"/"<<hp<<" HP";
-	ss<<"\n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
+	//ss<<"\n\t\t\t\t\t\t\t\t\t"<<weapon->toString()<<"\n\t\t\t\t\t\t\t\t"<<armor->toString();
 	return ss.str();
 }

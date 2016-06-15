@@ -32,6 +32,6 @@ mago::mago(soldado* m){
 
 string mago::toString()const{
 	stringstream ss;
-	ss<<name<<"- Mago: "<<currHP<<" HP \n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
+	ss<<name<<" - Mago: "<<currHP<<" HP "; //\n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
 	return ss.str();
 }
