@@ -14,13 +14,14 @@ lancero::lancero(string name, arma* weapon, armadura* armor, double hp):soldado(
 lancero::~lancero(){
 }
 
-void lancero::atacar(soldado* enemy){
+bool lancero::atacar(soldado* enemy,int hit){
 
 }
 
 string lancero::toString()const{
 	stringstream ss;
-	ss<<name<<" - Lancero: "<<currHP<<"/"<<hp<<" HP";
+	ss<<name<<" - Halberdier: "<<currHP<<"/"<<hp<<" HP";
+
 	//ss<<"\n\t\t\t\t\t\t\t\t\t"<<weapon->toString()<<"\n\t\t\t\t\t\t\t\t\t"<<armor->toString();
 	return ss.str();
 }

@@ -12,6 +12,6 @@ magia::magia(string atribute,double damage):arma(atribute,damage){
 
 string magia::toString()const{
 	stringstream ss;
-	ss<<"Magia: Atributo "<<this->atribute<<", Ataque "<<this->damage<<", "<<currDur<<"/"<<durability<<" durabilidad";
+	ss<<"Magic: Attribute "<<this->atribute<<", Attack "<<this->damage<<", "<<currDur<<"/"<<durability<<" Durability";
 	return ss.str();
 }

@@ -10,7 +10,7 @@ class espadachin: public soldado{
   public:
 	espadachin(string,arma*,armadura*,double=800.0);
 	~espadachin();
-	void atacar(soldado*);
+	bool atacar(soldado*,int);
 	string toString()const;
 
 };

@@ -21,10 +21,10 @@ soldado::soldado(string name,arma* weapon,armadura* armor,double hp):name(name),
 }
 
 soldado::~soldado(){
-	std::cout<<"Destruyendo soldado "<<this->name<<"..."<<std::endl;
+	std::cout<<"Deleting soldier "<<this->name<<"..."<<std::endl;
 	delete this->weapon;
 	delete this->armor;
-	std::cout<<"Destruido con exito!"<<std::endl;
+	std::cout<<"Deleted succesfuly!"<<std::endl;
 }
 
 void soldado::setAlive(bool nAlive){

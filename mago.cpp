@@ -14,7 +14,7 @@ mago::~mago(){
 
 }
 
-void mago::atacar(soldado* enemy){
+bool mago::atacar(soldado* enemy,int hit){
 
 }
 
@@ -32,6 +32,6 @@ mago::mago(soldado* m){
 
 string mago::toString()const{
 	stringstream ss;
-	ss<<name<<" - Mago: "<<currHP<<" HP "; //\n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
+	ss<<name<<" - Mage: "<<currHP<<" HP "; //\n\t"<<weapon->toString()<<"\n\t"<<armor->toString();
 	return ss.str();
 }

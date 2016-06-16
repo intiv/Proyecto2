@@ -5,17 +5,13 @@
 using std::stringstream;
 using std::string;
 
-armadura::armadura(string atribute,int durability, double defense):atribute(atribute){
+armadura::armadura(string atribute, double defense):atribute(atribute){
 	if(defense>0.0&&defense<400.0){
 		this->defense=defense;
 	}else{
 		this->defense=100.0;
 	}
-	if(durability>0&&durability<400){
-		this->durability=durability;
-	}else{
-		this->durability=100;
-	}
+	this->durability=100;
 	this->currDur=this->durability;
 }
 

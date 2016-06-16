@@ -4,6 +4,7 @@
 #include "espadachin.h"
 #include<string>
 #include<sstream>
+#include<cstdlib>
 using std::string;
 using std::stringstream;
 
@@ -13,11 +14,35 @@ espadachin::espadachin(string name,arma* weapon,armadura* armor,double hp):solda
 espadachin::~espadachin(){
 }
 
-void espadachin::atacar(soldado* enemy){
+bool espadachin::atacar(soldado* enemy,int hit){
 	double dmg=this->weapon->getDamage();
-	if(this->weapon->getAtribute().compare("Light")==0){
-		dmg-=((enemy->getArmor()->getDefense())*0.75);
+	int r1=rand()%101;
+	if(hit>=100||hit>0&&r1<=hit){
+		bool frz=false,brn=false;
+		if(this->weapon->getAtribute().compare("Light")==0){
+			dmg-=((enemy->getArmor()->getDefense())*0.75);
+		}else if(weapon->getAtribute().compare("Dark")==0){
+			dmg+=200;
+			dmg-=enemy->getArmor()->getDefense();
+		}else if(weapon->getAtribute().compare("Electricity")==0){
+			dmg+=50;
+			dmg-=enemy->getArmor()->getDefense();	
+		}else if(weapon->getAtribute().compare("Fire")==0){
+			if(enemy->getArmor()->getAtribute().compare("Ice")==0){
+				dmg+=100;
+			}else if(enemy->getArmor()->getAtribute().compare("Fire")==0){
+				dmg-=20;
+			}else{
+				dmg+=30;
+			}
+		}
+	
+		return true;
+	}else{
+		return false;
 	}
+	
+	
 }
 
 string espadachin::toString()const{

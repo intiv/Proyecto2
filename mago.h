@@ -10,6 +10,6 @@ class mago: public soldado{
   public:
 	mago(string,arma*,armadura*,double=500.0); 
 	~mago();
-	void atacar(soldado*);
+	bool atacar(soldado*,int);
 	string toString()const;
 };

@@ -11,7 +11,7 @@ pesada::pesada(string atribute, double defense):armadura(atribute,defense){
 
 string pesada::toString()const{
 	stringstream ss;
-	ss<<"Armadura Pesada: Atributo "<<this->atribute<<", Defensa "<<this->defense<<", "<<currDur<<"/"<<durability<<" durabilidad";
+	ss<<"Heavy Armor: Attribute "<<this->atribute<<", Defense "<<this->defense<<", "<<currDur<<"/"<<durability<<" Durability";
 	return ss.str();
 
 }

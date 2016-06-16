@@ -9,7 +9,7 @@ class armadura{
 	string atribute;
 	int durability, currDur;
  public:
-	armadura(string, int=100,double=100.0);
+	armadura(string,double=100.0);
 	string getAtribute()const;
 	void setAtribute(const string&);
 	void setDefense(double&);

@@ -10,7 +10,7 @@ class lancero: public soldado{
   public:
 	lancero(string, arma*, armadura*, double=1000.0);
 	~lancero();
-	void atacar(soldado*);
+	bool atacar(soldado*,int);
 	string toString()const;
 };
 

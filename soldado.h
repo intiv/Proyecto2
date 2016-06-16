@@ -27,6 +27,6 @@ class soldado{
 	bool isBurned()const;
 	void Freeze(bool);
 	void Burn(bool);
-	virtual void atacar(soldado*)=0;
+	virtual bool atacar(soldado*,int)=0;
 	virtual string toString()const=0;
 };

@@ -12,7 +12,7 @@ espada::espada(string atribute, double damage):arma(atribute,damage){
 
 string espada::toString()const{
 	stringstream ss;
-	ss<<"Espada:  Atributo "<<this->atribute<<", Ataque "<<this->damage;
-	ss<<", "<<currDur<<"/"<<durability<<" Durabilidad";
+	ss<<"Sword:  Attribute "<<this->atribute<<", Attack "<<this->damage;
+	ss<<", "<<currDur<<"/"<<durability<<" Durability";
 	return ss.str();
 }
