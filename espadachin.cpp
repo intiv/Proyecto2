@@ -16,33 +16,55 @@ espadachin::~espadachin(){
 
 bool espadachin::atacar(soldado* enemy,int hit){
 	double dmg=this->weapon->getDamage();
-	int r1=rand()%101;
-	if(hit>=100||hit>0&&r1<=hit){
-		bool frz=false,brn=false;
-		if(this->weapon->getAtribute().compare("Light")==0){
-			dmg-=((enemy->getArmor()->getDefense())*0.75);
-		}else if(weapon->getAtribute().compare("Dark")==0){
+	int chance=rand()%101;
+	if(this->weapon->getAtribute().compare("Light")==0){
+		dmg-=((enemy->getArmor()->getDefense())*0.75);
+	}else if(weapon->getAtribute().compare("Dark")==0){
+		if(armor->getAtribute().compare("Dark")==0){
 			dmg+=200;
 			dmg-=enemy->getArmor()->getDefense();
-		}else if(weapon->getAtribute().compare("Electricity")==0){
-			dmg+=50;
-			dmg-=enemy->getArmor()->getDefense();	
-		}else if(weapon->getAtribute().compare("Fire")==0){
-			if(enemy->getArmor()->getAtribute().compare("Ice")==0){
-				dmg+=100;
-			}else if(enemy->getArmor()->getAtribute().compare("Fire")==0){
-				dmg-=20;
+			double drain=dmg/2;
+			if((getCurrHP()+drain)>=getHP()){
+				setCurrHP(getHP());
 			}else{
-				dmg+=30;
+				setCurrHP(getCurrHP()+drain);
 			}
+			
+		}else{
+			dmg=0;
 		}
-	
-		return true;
-	}else{
-		return false;
+	}else if(weapon->getAtribute().compare("Electricity")==0){
+		if(enemy->getArmor()->getAtribute().compare("Electricity")==0){
+			dmg-=15;
+		}else{
+			dmg+=50;
+		}
+		enemy->getArmor()->setCurrDur(enemy->getArmor()->getCurrDur()-10);
+		enemy->getWeapon()->setCurrDur(enemy->getWeapon()->getCurrDur()-5);
+		dmg-=enemy->getArmor()->getDefense();	
+	}else if(weapon->getAtribute().compare("Fire")==0){
+		if(enemy->getArmor()->getAtribute().compare("Ice")==0){
+			if(chance<=25){
+				enemy->Burn(true);
+			}
+			dmg+=100;
+		}else if(enemy->getArmor()->getAtribute().compare("Fire")==0){
+			dmg-=20;
+		}else{
+			if(chance<=15){
+				enemy->Burn(true);
+			}
+			dmg+=30;
+		}
+		dmg-=enemy->getArmor()->getDefense();
+	}else if(weapon->getAtribute().compare("Ice")==0){
+
 	}
 	
-	
+	enemy->setCurrHP(enemy->getCurrHP()-dmg);
+	weapon->setCurrDur(weapon->getCurrDur()-5);
+	enemy->getArmor()->setCurrDur(enemy->getArmor()->getCurrDur()-5);
+	return true;
 }
 
 string espadachin::toString()const{

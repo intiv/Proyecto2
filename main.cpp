@@ -25,6 +25,7 @@ using std::vector;
 void ClearScreen(int&,int&);
 void printPJ(soldado*,int&,int&);
 void press();
+int Hit(const soldado*,const soldado*);
 
 int main(int argc, char* argv[]){
 	initscr();	
@@ -115,6 +116,36 @@ void printPJ(soldado* pj, int& y, int& x){
                 mvprintw(y/2+3,x/2-9,pj->getArmor()->toString().c_str());
 	}
 				 
+}
+
+int hit(const soldado* p1,const soldado* p2){
+	int chance;
+	if(typeid(*p1)==typeid(espadachin)){
+		chance=105;
+	}else if(typeid(*p1)==typeid(mago)){
+		chance=95;
+	}else{
+		chance=90;
+	}
+	if(p1->getWeapon()->getCurrDur()>0&&p2->getArmor()->getCurrDur()>0){
+	
+		if(typeid(*p2)==typeid(espadachin)){
+       	        	chance-=20;
+		}else if(typeid(*p1)==typeid(mago)){
+       	        	chance-=10;
+       	 	}else{
+                	chance+=5;
+        	}
+	
+		if(p2->getArmor()->getAtribute().compare("Electricity")==0){
+			chance-=20;
+		}
+		return chance;
+	}else if(p1->getWeapon()->getCurrDur()<=0&&p2->getArmor()->getCurrDur()>0){
+		return 0;
+	}else if(p1->getWeapon()->getCurrDur()>0&&p2->getArmor()->getCurrDur()<=0){
+		return chance;	
+	}
 }
 
 void press(){

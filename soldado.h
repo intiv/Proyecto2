@@ -21,6 +21,7 @@ class soldado{
 	double getHP()const;
 	string getName()const;
 	void setCurrHP(double);
+	void state();
 	double getCurrHP()const;
 	bool isAlive()const;
 	bool isFrozen()const;

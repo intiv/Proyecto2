@@ -51,6 +51,34 @@ bool soldado::isFrozen()const{
 	return this->frozen;
 }
 
+void soldado::state(){
+	if(currHP<=0){
+		alive=false;
+	}
+	if(alive){
+		if(burned){
+			this->currHP-=(currHP*0.05);
+			if(currHP<=0){
+                		alive=false;
+  	 	     	}
+		}
+		if(armor->getAtribute().compare("Dark")==0){
+			currHP-=(hp*0.15);
+			if(currHP<=0){
+                                alive=false;
+                        }
+
+		}else if(armor->getAtribute().compare("Light")==0){
+			currHP+=(hp*0.05);
+		}
+
+		if(weapon->getAtribute().compare("Light")==0){
+			currHP+=(hp*0.05);
+		}
+	}
+
+	
+}
 bool soldado::isBurned()const{
 	return this->burned;
 }
