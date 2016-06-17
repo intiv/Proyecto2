@@ -31,6 +31,9 @@ void soldado::setAlive(bool nAlive){
 	this->alive=nAlive;
 }
 
+double soldado::getCurrHP()const{
+	return this->currHP;
+}
 void soldado::setCurrHP(double nHP){
 	this->currHP=nHP;
 }
@@ -62,18 +65,27 @@ void soldado::state(){
                 		alive=false;
   	 	     	}
 		}
+
 		if(armor->getAtribute().compare("Dark")==0){
-			currHP-=(hp*0.15);
+			currHP-=(hp*0.10);
 			if(currHP<=0){
                                 alive=false;
                         }
 
 		}else if(armor->getAtribute().compare("Light")==0){
-			currHP+=(hp*0.05);
+			if((currHP+(hp*0.05))>=hp){
+				currHP=hp;
+			}else{
+				currHP+=(hp*0.05);
+			}
 		}
 
 		if(weapon->getAtribute().compare("Light")==0){
-			currHP+=(hp*0.05);
+			 if((currHP+(hp*0.05))>=hp){
+                                currHP=hp;
+                        }else{
+                                currHP+=(hp*0.05);
+                        }
 		}
 	}
 
@@ -93,6 +105,10 @@ void soldado::Burn(bool flag){
 
 double soldado::getHP()const{
 	return this->hp;
+}
+
+void soldado::setHP(double nHP){
+	this->hp=nHP;
 }
 
 string soldado::getName()const{

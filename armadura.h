@@ -12,7 +12,7 @@ class armadura{
 	armadura(string,double=100.0);
 	string getAtribute()const;
 	void setAtribute(const string&);
-	void setDefense(double&);
+	void setDefense(double);
 	double getDefense()const;	
 	int getDur()const;
 	int getCurrDur()const;

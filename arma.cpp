@@ -34,8 +34,12 @@ int arma::getDurability()const{
 	return this->durability;
 }
 
+void arma::setDurability(int nDur){
+	this->durability=nDur;
+}
+
 void arma::setDamage(double nDmg){
-	if(nDmg>0&&nDmg<500){
+	if(nDmg>0&&nDmg<=500){
 		this->damage=nDmg;
 	}
 }

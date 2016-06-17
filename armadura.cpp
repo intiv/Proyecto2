@@ -6,7 +6,7 @@ using std::stringstream;
 using std::string;
 
 armadura::armadura(string atribute, double defense):atribute(atribute){
-	if(defense>0.0&&defense<400.0){
+	if(defense>0.0&&defense<=400.0){
 		this->defense=defense;
 	}else{
 		this->defense=100.0;
@@ -23,7 +23,7 @@ void armadura::setAtribute(const string& nAtr){
 	this->atribute=nAtr;
 }
 
-void armadura::setDefense(double& nDef){
+void armadura::setDefense(double nDef){
 	this->defense=nDef;
 }
 
