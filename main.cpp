@@ -27,6 +27,7 @@ void printPJ(soldado*,int&,int&);
 void press();
 int hit(const soldado*,const soldado*);
 void heal(soldado*);
+int menu();
 
 int main(int argc, char* argv[]){
 	initscr();	
@@ -40,13 +41,18 @@ int main(int argc, char* argv[]){
 	getmaxyx(stdscr,y,x);
 	if(x<165||y<40){
 		while(x<165||y<40){
-			mvprintw(0,0,"Please expand your game window to get the full experience ");
-			mvprintw(1,0,"and avoid problems with the game's text");
+			mvprintw(0,0,"!!!Please expand your game window to get the full experience!!!");
+			mvprintw(1,0,"!!!and avoid problems with the game's text!!!");
 			mvprintw(2,0,"Once you have made the window bigger:");
 			mvprintw(3,0,"      press X to continue");
 			press();
 			getmaxyx(stdscr,y,x);
 		}
+	}
+	if(!has_colors()){
+		ClearScreen(y,x);
+		mvprintw(y/2-20,x/2-25,"Your terminal does not support colors, you will not be able to live the game's full experience");	
+		press();
 	}
 	enemies.at(0)=new espadachin("Von",new espada(atrs[0],150),new ligera(atrs[0],60),650);
 	enemies.at(1)=new mago("Ilya",new magia(atrs[1],200),new robe(atrs[0],60),750);
@@ -55,27 +61,38 @@ int main(int argc, char* argv[]){
 	enemies.at(2)->getArmor()->setDur(200);
 	enemies.at(2)->getWeapon()->setCurrDur(160);
         enemies.at(2)->getArmor()->setCurrDur(200);
-	enemies.at(3)=new mago("Lugh",new magia(atrs[5],200),new robe(atrs[5],130),1000);
-	enemies.at(4)=new lancero("Raiden",new lanza(atrs[3],320),new pesada(atrs[1],270),2000);
+	enemies.at(3)=new mago("Lugh",new magia(atrs[5],200),new robe(atrs[5],130),1200);
+	enemies.at(4)=new lancero("Raiden",new lanza(atrs[3],350),new pesada(atrs[1],280),2000);
 	enemies.at(4)->getWeapon()->setDurability(200);
         enemies.at(4)->getArmor()->setDur(200);
 	enemies.at(4)->getWeapon()->setCurrDur(200);
         enemies.at(4)->getArmor()->setCurrDur(200);
-	enemies.at(5)=new espadachin("Jean",new espada(atrs[5],450),new ligera(atrs[5],300),3000);
+	enemies.at(5)=new espadachin("Jean",new espada(atrs[5],370),new ligera(atrs[5],250),2500);
 	enemies.at(5)->getWeapon()->setDurability(500);
         enemies.at(5)->getArmor()->setDur(500);
 	enemies.at(5)->getWeapon()->setCurrDur(500);
         enemies.at(5)->getArmor()->setCurrDur(500);
 	ClearScreen(y,x);
-	/*int ch;
+	start_color();
+	short int r,g,b;
+	color_content(3,&r,&g,&b);
+	mvprintw(0,0,"Rojo: %d, verde: %d, azul: %d",r,g,b);
+	press();
+	init_color(COLOR_YELLOW,700,886,0);
+	init_color(COLOR_BLACK,50,50,50);
+	init_pair(1,COLOR_YELLOW,COLOR_BLACK);
+	attron(COLOR_PAIR(1));
+	int ch;
 	while((ch=getch())!=27){
-		move(10,10);
+		move(1,1);
 		printw("Keycode: %d     ",ch);
 		move(0,0);
 		printw("Letra: ");
 		refresh();
-	}*/
+	}
 
+	attroff(COLOR_PAIR(1));
+	refresh();
 	/*for(int i=0;i<enemies.size();i++){
 		ClearScreen(y,x);
 		printPJ(enemies[i],y,x);
@@ -84,6 +101,7 @@ int main(int argc, char* argv[]){
 	move(0,0);
 	ClearScreen(y,x);
 	weap=new espada(atrs[4],100);
+	weap->setDurability(200);
 	arm=new ligera(atrs[0],60);
 	pj=new espadachin("Shie",weap,arm,650);
 	mvprintw(y/2-3,x/2-65,"Shie, 18 years old, is a master of the sword and a princess; Daughter of the missing king of the Baste kingdom, Marcus III.");
@@ -101,12 +119,27 @@ int main(int argc, char* argv[]){
         printPJ(enemies.at(0),y,x);
 	press();
 	int vs=0;
-	while(/*pj->isAlive()&&enemies.at(vs)->isAlive()*/ true){
+	while(true){
 		ClearScreen(y,x);
+		mvprintw(13,0,"<Status>");
+		mvprintw(14,0," ------ ");
+		if(pj->isFrozen()){
+			mvprintw(15,0,"-Shie is frozen! You can't take any action this turn");
+		}
+		if(enemies.at(vs)->isFrozen()){
+			mvprintw(16,0,"-%s is frozen! %s's turn will be skipped!",enemies.at(vs)->getName(),enemies.at(vs)->getName());
+		}	
 		if(turno==1){
 			if(pj->isFrozen()){
 				pj->Freeze(false);
+				printPJ(pj,y,x);
+                                printPJ(enemies.at(vs),y,x);
+				press();
 			}else{
+				int m=menu();
+				if(m==50){
+					break;
+				}
 				int h=hit(pj,enemies.at(vs));
 				if(pj->atacar(enemies.at(vs),h)){
 					printPJ(pj,y,x);
@@ -118,30 +151,35 @@ int main(int argc, char* argv[]){
 			turno=2;
 		}else if(turno==2){
 			int h=hit(enemies.at(vs),pj);
-			if(enemies.at(vs)->atacar(pj,h)){
-                                printPJ(pj,y,x);
-                                printPJ(enemies.at(vs),y,x);
-                        }else{
-                                mvprintw(y/2,x/2,"Miss!!!");
-                        }
+			//if(enemies.at(vs)->getCurrHP()>=enemies.at(vs)->getHP()*0.5){
+				if(enemies.at(vs)->atacar(pj,h)){
+                               		printPJ(pj,y,x);
+                                	printPJ(enemies.at(vs),y,x);
+                        	}else{
+                       	        	mvprintw(y/2,x/2,"Miss!!!");
+                       		}
+			//}else{
+
+		//	}
 			turno=1;
 		}
 		press();
 		ClearScreen(y,x);
-		mvprintw(0,0,"Status:");
+		mvprintw(13,0,"<Status>");
+		mvprintw(14,0," ------ ");
 		pj->state();
 		enemies.at(vs)->state();
 		if(pj->isFrozen()){
-			mvprintw(1,0,"Shie is frozen! Your next turn will be skipped!");
+			mvprintw(15,0,"-Shie is frozen! Your next turn will be skipped!");
 		}
 		if(enemies.at(vs)->isFrozen()){
-			mvprintw(2,0,"%s is frozen! %s's next turn will be skipped!",enemies.at(vs)->getName(),enemies.at(vs)->getName());
+			mvprintw(16,0,"-%s is frozen! %s's next turn will be skipped!",enemies.at(vs)->getName(),enemies.at(vs)->getName());
 		}
 		if(pj->isBurned()){
-			mvprintw(3,0,"Shie is burned! You receive %f damage!",pj->getHP()*0.05);
+			mvprintw(17,0,"-Shie is burned! You receive %f damage!",pj->getHP()*0.05);
 		}
 		if(enemies.at(vs)->isBurned()){
-			mvprintw(4,0,"%s is burned! %s receives %f damage!",enemies.at(vs)->getName(),enemies.at(vs)->getName(),enemies.at(vs)->getHP()*0.05);
+			mvprintw(18,0,"-%s is burned! %s receives %f damage!",enemies.at(vs)->getName(),enemies.at(vs)->getName(),enemies.at(vs)->getHP()*0.05);
 		}
 		/*if(pj->getWeapon()->getAtribute().compare("Light")==0&&pj->getCurrHP>0){
 			mvprintw(5,0,"Shie heals %f thanks to her Darkbane!",pj->getHP*0.05);
@@ -270,6 +308,21 @@ void heal(soldado* pj){
 	pj->getArmor()->setCurrDur(pj->getArmor()->getDur());
 	pj->Freeze(false);
 	pj->Burn(false);
+}
+
+int menu(){
+	
+	mvprintw(0,0,"*****************");
+	mvprintw(1,0,"* 1- Atacar     *");
+	mvprintw(2,0,"* 2- Inventario *");
+	mvprintw(3,0,"*               *");
+	mvprintw(4,0,"*****************");	
+	while(true){
+		int key=getch();
+		if(key==49||key==50){
+			return key;
+		}	
+	}
 }
 
 int hit(const soldado* p1,const soldado* p2){

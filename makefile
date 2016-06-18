@@ -1,5 +1,5 @@
 guerra:	arma.o armadura.o soldado.o lanza.o espada.o magia.o robe.o ligera.o pesada.o mago.o espadachin.o lancero.o main.o
-	g++ arma.o armadura.o soldado.o lanza.o espada.o magia.o robe.o ligera.o pesada.o mago.o espadachin.o lancero.o main.o -lncurses -o guerra
+	g++ arma.o armadura.o soldado.o lanza.o espada.o magia.o robe.o ligera.o pesada.o mago.o espadachin.o lancero.o main.o -Wall -Wextra -lncurses -o guerra
 
 main.o:	main.cpp arma.h armadura.h soldado.h lancero.h espadachin.h mago.h ligera.h robe.h magia.h espada.h lanza.h
 	g++ -c main.cpp
