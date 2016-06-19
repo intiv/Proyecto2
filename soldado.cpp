@@ -67,7 +67,11 @@ void soldado::state(){
 		}
 
 		if(armor->getAtribute().compare("Dark")==0){
-			currHP-=(hp*0.10);
+			if(currHP>hp*0.10){
+				currHP-=(hp*0.10);
+			}else{
+				currHP=0;
+			}
 			if(currHP<=0){
                                 alive=false;
                         }
