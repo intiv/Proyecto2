@@ -7,7 +7,7 @@ class armadura{
  protected:
 	double defense;
 	string atribute;
-	int durability, currDur;
+	double durability, currDur;
  public:
 	armadura(string,double=100.0);
 	string getAtribute()const;

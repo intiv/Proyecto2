@@ -1,12 +1,16 @@
 #include "soldado.h"
 #include "arma.h"
 #include "armadura.h"
+#include "item.h"
+#include<vector>
 #include<string>
 #include<sstream>
 #include<iostream>
 
 using std::string;
 using std::stringstream;	
+using std::vector;
+
 soldado::soldado(string name,arma* weapon,armadura* armor,double hp):name(name),weapon(weapon),armor(armor){
 	if(hp>0.0&&hp<5000.0){
 		this->hp=hp;
@@ -91,6 +95,12 @@ void soldado::state(){
                                 currHP+=(hp*0.05);
                         }
 		}
+		for(int i=0;i<inventory.size();i++){
+			if(inventory.at(i)->getCurrUses()==0){
+				delete inventory[i];
+				inventory.erase(inventory.begin()+i);
+			}
+		}
 	}
 
 	
@@ -117,6 +127,22 @@ void soldado::setHP(double nHP){
 
 string soldado::getName()const{
 	return this->name;
+}
+
+item* soldado::getItem(int ind)const{
+	return this->inventory.at(ind);
+}
+
+vector<item*> soldado::getInv()const{
+	return this->inventory;
+}
+
+int soldado::invSize()const{
+	return this->inventory.size();
+}
+
+void soldado::addItem(item* nItem){
+	this->inventory.push_back(nItem);
 }
 /*
 string soldado::toString(){

@@ -10,6 +10,10 @@
 #include "lancero.h"
 #include "pesada.h"
 #include "espadachin.h"
+#include "item.h"
+#include "potion.h"
+#include "powder.h"
+#include "elixir.h"
 #include<cstring>
 #include<ncurses.h>
 #include<sstream>
@@ -28,6 +32,7 @@ void press();
 int hit(const soldado*,const soldado*);
 void heal(soldado*);
 int menu();
+int chartoint(int);
 
 int main(int argc, char* argv[]){
 	initscr();	
@@ -39,6 +44,19 @@ int main(int argc, char* argv[]){
 	arma* weap=0;
 	armadura* arm=0;
 	getmaxyx(stdscr,y,x);
+	start_color();
+	init_color(COLOR_YELLOW,555,455,0);
+	init_color(COLOR_CYAN,700,700,50);
+	init_color(COLOR_WHITE,1000,1000,1000);
+	init_color(COLOR_BLACK,100,100,100);
+	init_color(COLOR_MAGENTA,300,300,300);
+	init_pair(1,COLOR_YELLOW,COLOR_BLACK);
+	init_pair(2,COLOR_WHITE,COLOR_BLACK);
+	init_pair(3,COLOR_BLUE,COLOR_BLACK);
+	init_pair(4,COLOR_RED,COLOR_BLACK);
+	init_pair(5,COLOR_CYAN,COLOR_BLACK);
+	init_pair(6,COLOR_MAGENTA,COLOR_BLACK);
+	attron(COLOR_PAIR(2));
 	if(x<165||y<40){
 		while(x<165||y<40){
 			mvprintw(0,0,"!!!Please expand your game window to get the full experience!!!");
@@ -73,31 +91,18 @@ int main(int argc, char* argv[]){
 	enemies.at(5)->getWeapon()->setCurrDur(500);
         enemies.at(5)->getArmor()->setCurrDur(500);
 	ClearScreen(y,x);
-	start_color();
 	/*short int r,g,b;
 	color_content(3,&r,&g,&b);
 	mvprintw(0,0,"Rojo: %d, verde: %d, azul: %d",r,g,b);
 	press();*/
-	init_color(COLOR_YELLOW,555,455,0);
-	init_color(COLOR_CYAN,700,700,50);
-	init_color(COLOR_WHITE,1000,1000,1000);
-	init_color(COLOR_BLACK,100,100,100);
-	init_color(COLOR_MAGENTA,300,300,300);
-	init_pair(1,COLOR_YELLOW,COLOR_BLACK);
-	init_pair(2,COLOR_WHITE,COLOR_BLACK);
-	init_pair(3,COLOR_BLUE,COLOR_BLACK);
-	init_pair(4,COLOR_RED,COLOR_BLACK);
-	init_pair(5,COLOR_CYAN,COLOR_BLACK);
-	init_pair(6,COLOR_MAGENTA,COLOR_BLACK);
-	attron(COLOR_PAIR(2));
-	/*int ch;
+	int ch;
 	while((ch=getch())!=27){
 		move(1,1);
 		printw("Keycode: %d     ",ch);
 		move(0,0);
 		printw("Letra: %c",ch);
 		refresh();
-	}*/
+	}
 
 	/*for(int i=0;i<enemies.size();i++){
 		ClearScreen(y,x);
@@ -142,8 +147,11 @@ int main(int argc, char* argv[]){
 	mvprintw(0,0,"Chapter 1");
 	printPJ(pj,y,x);
         printPJ(enemies.at(vs),y,x);
-	
-	while(true){
+	bool play=true;
+	pj->addItem(new potion(3,100));
+	pj->addItem(new powder(3,100));
+	pj->addItem(new elixir(3,100));
+	while(play){
 		ClearScreen(y,x);
 		mvprintw(13,0,"<Status>");
 		mvprintw(14,0," ------ ");
@@ -162,22 +170,55 @@ int main(int argc, char* argv[]){
 			}else{
 				printPJ(pj,y,x);
 				printPJ(enemies.at(vs),y,x);
-				int m=menu();
-				if(m==50){
-					break;
+				bool opValida=false;
+				while(!opValida){
+					int m=menu();
+					if(m==50){
+						ClearScreen(y,x);
+						if(pj->invSize()>0){
+							printPJ(pj,y,x);
+							printPJ(enemies.at(vs),y,x);
+							mvprintw(0,0,"Inventory: ");
+							mvprintw(1,0,"----------");		
+							for(int i=0;i<pj->invSize();i++){
+								mvprintw(2+i,0,"%d.- %s",i,pj->getInv().at(i)->toString().c_str());
+							}
+							mvprintw(2+pj->invSize(),0,"%d.- Cancel",pj->invSize());
+							bool itemValido=false;
+							while(!itemValido){
+								int index=getch();
+								if(index>=48&&index<=(47+pj->invSize())){
+									pj->getInv().at(chartoint(index))->function(pj);
+									itemValido=true;
+									opValida=true;
+								}else if(index==48+pj->invSize()){
+									itemValido=true;
+								}
+							}
+						}else{
+							mvprintw(y/2-3,x/2-40,"You have no items!");
+							press();
+						}
+					}else if(m==49){
+						int h=hit(pj,enemies.at(vs));
+						if(pj->atacar(enemies.at(vs),h)){
+							printPJ(pj,y,x);
+							printPJ(enemies.at(vs),y,x);
+						}else{
+							mvprintw(y/2,x/2,"Miss!!!");
+						}
+						opValida=true;
+					}else if(m==51){
+						ClearScreen(y,x);
+						play=false;
+						opValida=true;
+					}
 				}
-				int h=hit(pj,enemies.at(vs));
-				if(pj->atacar(enemies.at(vs),h)){
-					printPJ(pj,y,x);
-					printPJ(enemies.at(vs),y,x);
-				}else{
-					mvprintw(y/2,x/2,"Miss!!!");
-				}
+				turno=2;
 			}
-			turno=2;
 		}else if(turno==2){
 			int h=hit(enemies.at(vs),pj);
-			//if(enemies.at(vs)->getCurrHP()>=enemies.at(vs)->getHP()*0.5){
+			//if(enemies.at(vs)->getCurrHP()>=enemies.at(vs)->getHP()*0.5||enemies.at(vs)->invSize()==0){
 				if(enemies.at(vs)->atacar(pj,h)){
                                		printPJ(pj,y,x);
                                 	printPJ(enemies.at(vs),y,x);
@@ -190,6 +231,7 @@ int main(int argc, char* argv[]){
 			turno=1;
 		}
 		ClearScreen(y,x);
+		
 		mvprintw(13,0,"<Status>");
 		mvprintw(14,0," ------ ");
 		pj->state();
@@ -535,6 +577,8 @@ int main(int argc, char* argv[]){
 	return 0;
 }
 
+
+
 void ClearScreen(int& y,int& x){
 	for(int i=0;i<y;i++){
 		for(int j=0;j<x;j++){
@@ -544,6 +588,16 @@ void ClearScreen(int& y,int& x){
 	move(0,0);
 }
 
+
+int chartoint(int index){
+	switch(index){
+		case 48: return 0;
+		case 49: return 1;
+		case 50: return 2;
+		case 51: return 3;
+		case 52: return 4;
+	}
+}
 void printPJ(soldado* pj, int& y, int& x){
 	if(pj->getName().compare("Shie")==0){
 		attron(COLOR_PAIR(2));
@@ -679,7 +733,7 @@ int menu(){
 	attroff(COLOR_PAIR(2));
 	while(true){
 		int key=getch();
-		if(key==49||key==50){
+		if(key==49||key==50||key==51){
 			return key;
 		}	
 	}

@@ -90,7 +90,7 @@ bool espadachin::atacar(soldado* enemy,int hit){
 
 string espadachin::toString()const{
 	stringstream ss;
-	ss<<name<<" - Espadachin: "<<currHP<<"/"<<hp<<" HP";
+	ss<<name<<" - Swordmaster: "<<currHP<<"/"<<hp<<" HP";
 	//ss<<"\n\t\t\t\t\t\t\t\t\t"<<weapon->toString()<<"\n\t\t\t\t\t\t\t\t"<<armor->toString();
 	return ss.str();
 }
