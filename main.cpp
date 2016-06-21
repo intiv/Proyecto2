@@ -21,23 +21,33 @@
 #include<cstdlib>
 #include<ctime>
 #include<vector>
+#include<iomanip>
 
 using std::string;
 using std::stringstream;
 using std::vector;
+using std::setprecision;
 
 void ClearScreen(int&,int&);
 void printPJ(soldado*,int&,int&);
 void press();
-int hit(const soldado*,const soldado*);
 void heal(soldado*);
 int menu();
 int chartoint(int);
+void printcity(int);
+void pueblo(int&,int&,soldado*,int,vector<item*>&);
 
 int main(int argc, char* argv[]){
 	initscr();	
 	int x,y;
 	vector<soldado*> enemies(6);
+	vector<item*> shop;
+	shop.push_back(new potion(150));
+	shop.push_back(new potion(150));
+	shop.push_back(new potion(150));
+	shop.push_back(new powder(200));
+	shop.push_back(new powder(200));
+	shop.push_back(new elixir(500));
 	noecho();
 	const string atrs[6]={"N/A","Fire","Ice","Electricity","Light","Dark"};
 	soldado* pj=0;
@@ -148,7 +158,7 @@ int main(int argc, char* argv[]){
 	printPJ(pj,y,x);
         printPJ(enemies.at(vs),y,x);
 	bool play=true;
-	pj->addItem(new potion(3,100));
+	pj->addItem(new potion(100));
 	while(play){
 		ClearScreen(y,x);
 		mvprintw(13,0,"<Status>");
@@ -159,6 +169,7 @@ int main(int argc, char* argv[]){
 		if(enemies.at(vs)->isFrozen()){
 			mvprintw(16,0,"-%s is frozen! %s's turn will be skipped!",enemies.at(vs)->getName(),enemies.at(vs)->getName());
 		}	
+		printcity(vs);
 		if(turno==1){
 			if(pj->isFrozen()){
 				pj->Freeze(false);
@@ -168,6 +179,7 @@ int main(int argc, char* argv[]){
 			}else{
 				printPJ(pj,y,x);
 				printPJ(enemies.at(vs),y,x);
+				printcity(vs);
 				bool opValida=false;
 				while(!opValida){
 					int m=menu();
@@ -176,12 +188,12 @@ int main(int argc, char* argv[]){
 						if(pj->invSize()>0){
 							printPJ(pj,y,x);
 							printPJ(enemies.at(vs),y,x);
-							mvprintw(0,0,"Inventory: ");
-							mvprintw(1,0,"----------");		
+							mvprintw(4,0,"Inventory: ");
+							mvprintw(5,0,"----------");		
 							for(int i=0;i<pj->invSize();i++){
-								mvprintw(2+i,0,"%d.- %s",i,pj->getInv().at(i)->toString().c_str());
+								mvprintw(6+i,0,"%d.- %s",i,pj->getInv().at(i)->toString(0).c_str());
 							}
-							mvprintw(2+pj->invSize(),0,"%d.- Cancel",pj->invSize());
+							mvprintw(6+pj->invSize(),0,"%d.- Cancel",pj->invSize());
 							bool itemValido=false;
 							while(!itemValido){
 								int index=getch();
@@ -190,6 +202,7 @@ int main(int argc, char* argv[]){
 									itemValido=true;
 									opValida=true;
 								}else if(index==48+pj->invSize()){
+									ClearScreen(y,x);
 									itemValido=true;
 								}
 							}
@@ -227,26 +240,28 @@ int main(int argc, char* argv[]){
 			turno=1;
 		}
 		ClearScreen(y,x);
-		
 		mvprintw(13,0,"<Status>");
 		mvprintw(14,0," ------ ");
 		pj->state();
 		enemies.at(vs)->state();
 		if(pj->isFrozen()){
-			mvprintw(15,0,"-Shie is frozen! Your next turn will be skipped!");
+			mvprintw(17,0,"-Shie is frozen! Your next turn will be skipped!");
 		}
 		if(enemies.at(vs)->isFrozen()){
-			mvprintw(16,0,"-%s is frozen! %s's next turn will be skipped!",enemies.at(vs)->getName(),enemies.at(vs)->getName());
+			mvprintw(18,0,"-%s is frozen! %s's next turn will be skipped!",enemies.at(vs)->getName(),enemies.at(vs)->getName());
 		}
 		if(pj->isBurned()){
-			mvprintw(17,0,"-Shie is burned! You receive %f damage!",pj->getHP()*0.05);
+			mvprintw(19,0,"-Shie is burned! You receive %0.2f damage!",pj->getHP()*0.05);
 		}
 		if(enemies.at(vs)->isBurned()){
-			mvprintw(18,0,"-%s is burned! %s receives %f damage!",enemies.at(vs)->getName(),enemies.at(vs)->getName(),enemies.at(vs)->getHP()*0.05);
+			mvprintw(20,0,"-%s is burned! %s receives %0.2f damage!",enemies.at(vs)->getName(),enemies.at(vs)->getName(),enemies.at(vs)->getHP()*0.05);
 		}
-		/*if(pj->getWeapon()->getAtribute().compare("Light")==0&&pj->getCurrHP>0){
-			mvprintw(5,0,"Shie heals %f thanks to her Darkbane!",pj->getHP*0.05);
-		}*/
+		if(pj->getWeapon()->getAtribute().compare("Light")==0&&pj->getCurrHP()>0){
+			mvprintw(15,0,"Shie heals %0.2f thanks to her Darkbane!",pj->getHP()*0.03);
+		}
+		if(pj->getArmor()->getAtribute()=="Light"&&pj->getCurrHP()>0){
+			mvprintw(16,0,"Shie heals %0.2f thanks to her Blessed Armor!",pj->getHP()*0.03);
+		}
 		printPJ(pj,y,x);
                 printPJ(enemies.at(vs),y,x);
 		press();
@@ -258,12 +273,10 @@ int main(int argc, char* argv[]){
 				break;
 			}
 			pj->setHP(pj->getHP()+200);
-			pj->getWeapon()->setDamage(pj->getWeapon()->getDamage()+50);
-			pj->getWeapon()->setDurability(pj->getWeapon()->getDurability()+20);
-			pj->getArmor()->setDefense(pj->getArmor()->getDefense()+5);
-			pj->getArmor()->setDur(pj->getArmor()->getDur()+20);
-			heal(pj);
+			pj->getWeapon()->setDamage(pj->getWeapon()->getDamage()+20);
 			ClearScreen(y,x);
+			mvprintw(y/2-3,x/2-30,"Level up! Max HP + 200, Attack + 20!");
+			press();
 			attron(COLOR_PAIR(2));
 			if(vs==1){
 				mvprintw(y/2,x/2-40,"Shie: *pant* Who sent you to kill me!? Where is my father!?");
@@ -286,7 +299,7 @@ int main(int argc, char* argv[]){
 				press();
 				ClearScreen(y,x);
 				mvprintw(y/2-3,x/2-20,"~Chapter 2: Intervention~");
-				mvprintw(y/2-2,x/2-20,"-----------------------");
+				mvprintw(y/2-2,x/2-20,"-------------------------");
 				press();
 				mvprintw(y/2,x/2-40,"*At the old lady's house*");
 				mvprintw(y/2+2,x/2-40,"Old lady: I heard what that man said, I'm afraid it's true...");
@@ -298,7 +311,7 @@ int main(int argc, char* argv[]){
 				press();
 				ClearScreen(y,x);
 				mvprintw(y/2-3,x/2-20,"~Chapter 2: Intervention~");
-				mvprintw(y/2-2,x/2-20,"-----------------------");
+				mvprintw(y/2-2,x/2-20,"-------------------------");
 				mvprintw(y/2,x/2-40,"Shie: That can't be! Sir Raiden is an excellent knight and a man my father trusted very much!");
 				mvprintw(y/2+2,x/2-40,"Shie: Plus, had that happened, it would be known through out all of Baste");
 				press();
@@ -308,10 +321,11 @@ int main(int argc, char* argv[]){
 				press();
 				ClearScreen(y,x);	
 				mvprintw(y/2-3,x/2-20,"~Chapter 2: Intervention~");
-				mvprintw(y/2-2,x/2-20,"-----------------------");
+				mvprintw(y/2-2,x/2-20,"-------------------------");
 				press();
 				mvprintw(y/2,x/2-40,"Spy: Go to the White Forest, someone awaits you there.");
 				press();
+				pueblo(y,x,pj,vs,shop);
 				mvprintw(y/2+2,x/2-40,"And so, Shie set out for the White Forest, a huge maze of enchanted trees");
 				mvprintw(y/2+3,x/2-40,"There, she found a fire mage who seemed like she had been meditating; as though waiting for someone");
 				mvprintw(y/2+4,x/2-40,"Unfortunately, upon seeing Shie, the mage attacked without giving her a chance to even speak!");
@@ -349,9 +363,13 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Shie: Very well, let's split up to not risk getting caught. We'll meet at the cathedral!");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 3: Honor, Death, Glory");
-				mvprintw(y/2-2,x/2-20,"------------------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 3: Honor, Death, Glory~");
+				mvprintw(y/2-2,x/2-20,"--------------------------------");
 				mvprintw(y/2,x/2-40,"However, the city of Krast had been ocupied by unknown soldiers, commanded by a tall Halberdier");
+				press();
+				pueblo(y,x,pj,vs,shop);
+				mvprintw(y/2-3,x/2-20,"~Chapter 3: Honor, Death, Glory~");
+				mvprintw(y/2-2,x/2-20,"--------------------------------");
 				mvprintw(y/2+1,x/2-40,"Shie managed to sneak past many soldiers, but was stopped in front of the cathedral by the commander, Aran!");
 				press();
 				mvprintw(y/2+2,x/2-40,"Aran: I commend you for getting this far, my dear Princess, but your journey ends now!");
@@ -366,8 +384,8 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+2,x/2-40,"Shie: No, I must save the Priest! Hang on, I'm coming!");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 4: Evil Omen");
-				mvprintw(y/2-2,x/2-20,"--------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 4: Evil Omen~");
+				mvprintw(y/2-2,x/2-20,"----------------------");
 				press();
 				mvprintw(y/2,x/2-40,"Priest Owain: You are not welcome in this cathedral. Begone, evildoers!");
 				press();
@@ -378,8 +396,8 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Lugh: you bastard! How dare you curse me like that, I will kill you before you can bless the princess!");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 4: Evil Omen");
-				mvprintw(y/2-2,x/2-20,"--------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 4: Evil Omen~");
+				mvprintw(y/2-2,x/2-20,"----------------------");
 				mvprintw(y/2,x/2-40,"Shie: Not so fast! I won't allow you to harm the priest!");
 				press();
 				mvprintw(y/2+2,x/2-40,"Ilya: Shie! I arrived just in time, I will keep the soldiers busy.");
@@ -388,8 +406,8 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Shie: Yes, I'll defeat you with my holy blade, Darkbane!");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 4: Evil Omen");
-				mvprintw(y/2-2,x/2-20,"--------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 4: Evil Omen~");
+				mvprintw(y/2-2,x/2-20,"----------------------");
 				mvprintw(y/2,x/2-40,"Lugh: Disgusting, how can you rely on such weak magic as Light! I'll show you true power!");
 				press();
 				heal(pj);
@@ -406,8 +424,8 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"With this new power, she struck down the dark mage who burned to death when hit by the holy light");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 5: Revelations");
-				mvprintw(y/2-2,x/2-20,"----------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 5: Revelations~");
+				mvprintw(y/2-2,x/2-20,"------------------------");
 				press();
 				mvprintw(y/2,x/2-40,"Priest Owain: Thanks for saving this cathedral. I have heard of your journey to find the king.");
 				mvprintw(y/2+2,x/2-40,"Priest Owain: I shall bless your armor so you can fight these heathens who embrace Darkness");
@@ -419,8 +437,8 @@ int main(int argc, char* argv[]){
 				pj->getArmor()->setDefense(pj->getArmor()->getDefense()+50);
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 5: Revelations");
-				mvprintw(y/2-2,x/2-20,"----------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 5: Revelations~");
+				mvprintw(y/2-2,x/2-20,"------------------------");
 				mvprintw(y/2,x/2-40,"Shie: Thank you, Priest. I shall use this power to rescue my father!");
 				press();
 				mvprintw(y/2+2,x/2-40,"Ilya: Very well! We can now fight Raiden and res---");
@@ -428,17 +446,17 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Raiden: Were you talking about me? Why, I'm honored!");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 5: Revelations");
-				mvprintw(y/2-2,x/2-20,"----------------------");
-				mvprintw(y/2,x/2-40,"Shie: Aunt Ilyia, NOOOOO!!!");
+				mvprintw(y/2-3,x/2-20,"~Chapter 5: Revelations~");
+				mvprintw(y/2-2,x/2-20,"------------------------");
+				mvprintw(y/2,x/2-40,"Shie: Aunt Ilya, NOOOOO!!!");
 				mvprintw(y/2+2,x/2-40,"Her aunt fell to her death, as the man who killed her was revealed behind her. It was Raiden!");
 				press();
 				mvprintw(y/2+4,x/2-40,"Raiden: This is a formal invitation to you, My Princess. From your beloved brother, Jean!");
 				press();
 				mvprintw(y/2+6,x/2-40,"Shie: Did you just say Jean!? That's impossible, he died when he was 8!");
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 5: Revelations");
-				mvprintw(y/2-2,x/2-20,"----------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 5: Revelations~");
+				mvprintw(y/2-2,x/2-20,"------------------------");
 				mvprintw(y/2,x/2-40,"Raiden: Believe what you want. Come to Mailfaisance Tower and all your questions shall be answered");
 				press();
 				mvprintw(y/2+2,x/2-40,"Shie: Wait, please explain yourself! Where is my father!?");
@@ -448,8 +466,8 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Before Shie could draw her blade, a thunder fell on Raiden and he disappeared immeadiately");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 5: Revelations");
-				mvprintw(y/2-2,x/2-20,"----------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 5: Revelations~");
+				mvprintw(y/2-2,x/2-20,"------------------------");
 				mvprintw(y/2,x/2-40,"Shie: I will go. I'm coming, RAIDEN! JEAN!");
 				press();
 				mvprintw(y/2+1,x/2-40,"The princess set out for the Mailfaisance Tower");
@@ -460,8 +478,8 @@ int main(int argc, char* argv[]){
 				press();
 				mvprintw(y/2+6,x/2-40,"Every time she thought about it, it sent chills down her spine...");
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 5: Revelations");
-				mvprintw(y/2-2,x/2-20,"----------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 5: Revelations~");
+				mvprintw(y/2-2,x/2-20,"------------------------");
 				mvprintw(y/2,x/2-40,"Shie got to the tower. she saw no one guarding the tower; nor did she hear anyone inside it, so she went inside");
 				press();
 				mvprintw(y/2+2,x/2-40,"Shie: Raiden, I'm here! Come forth and face me, you coward!");
@@ -472,8 +490,8 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Jean: Yes, we really are happy, my sister!");
 				press();
 				ClearScreen(y,x);
-				mvprintw(y/2-3,x/2-20,"Chapter 5: Revelations");
-				mvprintw(y/2-2,x/2-20,"----------------------");
+				mvprintw(y/2-3,x/2-20,"~Chapter 5: Revelations~");
+				mvprintw(y/2-2,x/2-20,"------------------------");
 				mvprintw(y/2,x/2-40,"Shie: Brother! So you ARE alive! Where is father, what have you done to him!?");
 				press();
 				mvprintw(y/2+2,x/2-40,"Jean: Do not worry, he is asleep inside his magic cage in the second floor. You can come see him...");
@@ -573,7 +591,27 @@ int main(int argc, char* argv[]){
 	return 0;
 }
 
-
+void printcity(int vs){
+	if(vs==0){
+		mvprintw(0,0,"~ Town of Tir~");
+		mvprintw(1,0,"**************");
+	}else if(vs==1){
+		mvprintw(0,0,"~White Forest~");
+		mvprintw(1,0,"**************");
+	}else if(vs==2){
+		mvprintw(0,0,"~City of Krast~");
+		mvprintw(1,0,"***************");
+	}else if(vs==3){
+		mvprintw(0,0,"~Krast's Great Cathedral~");
+		mvprintw(1,0,"*************************");
+	}else if(vs==4){
+		mvprintw(0,0,"~Mailfaisance Tower~");
+		mvprintw(1,0,"********************");
+	}else if(vs==5){
+		mvprintw(0,0,"~Ritual Chamber~");
+		mvprintw(1,0,"****************");
+	}
+}
 
 void ClearScreen(int& y,int& x){
 	for(int i=0;i<y;i++){
@@ -592,6 +630,8 @@ int chartoint(int index){
 		case 50: return 2;
 		case 51: return 3;
 		case 52: return 4;
+		case 53: return 5;
+		case 54: return 6;
 	}
 }
 void printPJ(soldado* pj, int& y, int& x){
@@ -721,11 +761,11 @@ void heal(soldado* pj){
 
 int menu(){
 	attron(COLOR_PAIR(2));
-	mvprintw(0,0,"*****************");
-	mvprintw(1,0,"* 1- Atacar     *");
-	mvprintw(2,0,"* 2- Inventario *");
-	mvprintw(3,0,"*               *");
-	mvprintw(4,0,"*****************");	
+	mvprintw(3,0,"*****************");
+	mvprintw(4,0,"* 1- Atacar     *");
+	mvprintw(5,0,"* 2- Inventario *");
+	mvprintw(6,0,"*               *");
+	mvprintw(7,0,"*****************");	
 	attroff(COLOR_PAIR(2));
 	while(true){
 		int key=getch();
@@ -736,8 +776,95 @@ int menu(){
 	return 1;
 }
 
-void pueblo(soldado* pj){
+void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop){
+	while(true){
+		ClearScreen(y,x);
+		mvprintw(y/2-4,x/2-30,"*********************************");
+		if(vs==1){
+			mvprintw(y/2-3,x/2-30,"*         -Town of Tir-         *");
+		}else if(vs==2){
+			mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+		}else if(vs==3){
+			mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+		}
+			mvprintw(y/2-2,x/2-30,"*                               *");
+		mvprintw(y/2-1,x/2-30,"*  1.- Sleep at the Inn (100g)  *");
+		  mvprintw(y/2,x/2-30,"*  2.- Repair Equipment (100g)  *");
+		mvprintw(y/2+1,x/2-30,"*  3.- Upgrade Weapon   (200g)  *");
+		mvprintw(y/2+2,x/2-30,"*  4.- Upgrade Armor    (200g)  *");
+		mvprintw(y/2+3,x/2-30,"*  5.- Item Shop                *");
+		mvprintw(y/2+4,x/2-30,"*  6.- Leave Town (Fight)       *");
+		mvprintw(y/2+5,x/2-30,"*********************************");
+		int key;
+		bool input=false;
+		while(!input){
+			key=getch();
+			if(key==49||key==50||key==51||key==52||key==53||key==54){
+				input=true;
+			}
+		}
+		int op=chartoint(key);
+		ClearScreen(y,x);
+		if(op==1){
+			if(pj->getMoney()>=100){
+				if(pj->getCurrHP()==pj->getHP()){
+					mvprintw(y/2-3,x/2-30,"You are already fully healed!");
+					press();
+				}else{
+					pj->setCurrHP(pj->getHP());
+					pj->pay(100);
+					mvprintw(y/2-3,x/2-30,"Sweet dreams Zzz...");
+					press();
+				}
+			}else{
+				mvprintw(y/2-3,x/2-30,"Not enough money!");
+				press();
+			}
+		}else if(op==2){
+			if(pj->getMoney()>=100){
+				if(pj->getWeapon()->getCurrDur()==pj->getWeapon()->getDurability()&&pj->getArmor()->getCurrDur()==pj->getArmor()->getDur()){
+					mvprintw(y/2-3,x/2-30,"Your equipment is already in the best condition!");
+					press();
+				}else{
+					pj->getArmor()->setCurrDur(pj->getArmor()->getDur());
+					pj->getWeapon()->setCurrDur(pj->getWeapon()->getDurability());
+					mvprintw(y/2-3,x/2-30,"Blacksmith: Very well, I'll leave your equipment like new!");
+					pj->pay(100);
+					press();
+				}
+			}else{
+                                mvprintw(y/2-3,x/2-30,"Not enough money!");
+                                press();
+                        }
+		}else if(op==3){
+			
+		}else if(op==4){
+
+		}else if(op==5){
+			if(vs==1){
+				mvprintw(y/2-3,x/2-30,"*         -Town of Tir-         *");
+			}else if(vs==2){
+				mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+			}else if(vs==3){
+				mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+			}
+			mvprintw(y/2-2,x/2-30,"*                         *");
+			mvprintw(y/2-1,x/2-30,"*     Item  -  Price      *");
+			mvprintw(y/2,x/2-30,"*   -------------------   *");
+			for(int i=0;i<shop.size();i++){
+			        mvprintw(y/2+1+i,x/2-30,"*                         *");
+			}
+			for(int j=0;j<shop.size();j++){
+				mvprintw(y/2+1+j,x/2-27,"%d.- %s",j,shop[j]->toString(1).c_str());
+			}
+	     		mvprintw(y/2+1+shop.size(),x/2-30,"***************************");
+			getch();
+			break;
+		}else if(op==6){
+			break;
+		}
 	
+	}	
 }
 
 void press(){

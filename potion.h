@@ -7,8 +7,8 @@ using std::string;
 class potion: public item{
   public:
 	potion();
-	potion(int,double);
+	potion(double);
 	~potion();
-	string toString()const;
+	string toString(int)const;
 	void function(soldado*);
 };

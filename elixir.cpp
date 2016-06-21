@@ -13,12 +13,15 @@ elixir::elixir(){
 elixir::~elixir(){
 }
 
-elixir::elixir(int uses, double price):item(uses,price,100){
+elixir::elixir(double price):item(1,price,100){
 }
 
-string elixir::toString()const{
+string elixir::toString(int op)const{
 	stringstream ss;
-	ss<<"Elixir: Potent healing item. Heals up to "<<value*6<<" HP and repairs your equipment by up to "<<value<<" durability, Removes burn. "<<currUses<<"/"<<uses;
+	ss<<"Elixir - "<<currUses<<"/"<<uses;
+	if(op==1){
+		ss<<" "<<item::toString(1);
+	}
 	return ss.str();
 }
 

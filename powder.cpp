@@ -13,12 +13,15 @@ powder::powder(){
 powder::~powder(){
 }
 
-powder::powder(int uses,double price):item(uses,price,40){
+powder::powder(double price):item(2,price,40){
 }
 
-string powder::toString()const{
+string powder::toString(int op)const{
 	stringstream ss;
-	ss<<"Repair Powder: Repairs up to "<<value<<" durability to your equipment. "<<currUses<<"/"<<uses;
+	ss<<"Powder - "<<currUses<<"/"<<uses;
+	if(op==1){
+		ss<<" "<<item::toString(1);
+	}
 	return ss.str();
 }
 

@@ -9,7 +9,7 @@ class powder: public item{
   public:
 	powder();
 	~powder();
-	powder(int,double);
-	string toString()const;
+	powder(double);
+	string toString(int)const;
 	void function(soldado*);
 };

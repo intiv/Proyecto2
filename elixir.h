@@ -7,7 +7,7 @@ class elixir: public item{
   public:
 	elixir();
 	~elixir();
-	elixir(int,double);
-	string toString()const;
+	elixir(double);
+	string toString(int)const;
 	void function(soldado*);
 };

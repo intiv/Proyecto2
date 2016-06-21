@@ -25,3 +25,10 @@ int item::getCurrUses()const{
 double item::getPrice()const{
 	return this->price;
 }
+
+
+string item::toString(int op)const{
+	stringstream ss;
+	ss<<price<<"g";
+	return ss.str();
+}

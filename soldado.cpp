@@ -18,7 +18,7 @@ soldado::soldado(string name,arma* weapon,armadura* armor,double hp):name(name),
 	this->alive=true;
 	this->frozen=false;
 	this->burned=false;
-	
+	this->money=200;
 }
 
 soldado::~soldado(){
@@ -55,6 +55,18 @@ bool soldado::isFrozen()const{
 	return this->frozen;
 }
 
+int soldado::getMoney()const{
+	return this->money;
+}
+
+void soldado::pay(int price){
+	this->money-=price;
+}
+
+void soldado::earn(int prize){
+	this->money+=prize;
+}
+
 void soldado::state(){
 	if(currHP<=0){
 		alive=false;
@@ -68,8 +80,8 @@ void soldado::state(){
 		}
 
 		if(armor->getAtribute().compare("Dark")==0){
-			if(currHP>hp*0.10){
-				currHP-=(hp*0.10);
+			if(currHP>hp*0.08){
+				currHP-=(hp*0.08);
 			}else{
 				currHP=0;
 			}
@@ -78,18 +90,18 @@ void soldado::state(){
                         }
 
 		}else if(armor->getAtribute().compare("Light")==0){
-			if((currHP+(hp*0.05))>=hp){
+			if((currHP+(hp*0.03))>=hp){
 				currHP=hp;
 			}else{
-				currHP+=(hp*0.05);
+				currHP+=(hp*0.03);
 			}
 		}
 
 		if(weapon->getAtribute().compare("Light")==0){
-			 if((currHP+(hp*0.05))>=hp){
+			 if((currHP+(hp*0.03))>=hp){
                                 currHP=hp;
                         }else{
-                                currHP+=(hp*0.05);
+                                currHP+=(hp*0.03);
                         }
 		}
 		for(int i=0;i<inventory.size();i++){

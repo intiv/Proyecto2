@@ -15,6 +15,7 @@ class soldado{
 	vector<item*> inventory;
 	arma* weapon;
 	armadura* armor;
+	int money;
 	double hp, currHP;
 	bool alive, frozen, burned;
   public:
@@ -26,6 +27,7 @@ class soldado{
 	vector<item*> getInv()const;
 	string getName()const;
 	int invSize()const;
+	int getMoney()const;
 	double getHP()const;
 	double getCurrHP()const;
 	bool isAlive()const;
@@ -34,6 +36,8 @@ class soldado{
 	void Freeze(bool);
 	void Burn(bool);
 	void setCurrHP(double);
+	void pay(int);
+	void earn(int);
 	void state();
 	void addItem(item*);
 	void use(int);

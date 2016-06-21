@@ -16,6 +16,6 @@ class item{
 	int getUses()const;
 	double getPrice()const;
 	int getCurrUses()const;
-	virtual string toString()const=0;
+	virtual string toString(int)const;
 	virtual void function(soldado*)=0;
 };

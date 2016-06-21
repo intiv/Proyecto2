@@ -1,4 +1,5 @@
 #include "potion.h"
+#include "item.h"
 #include<string>
 #include<sstream>
 #include "soldado.h"
@@ -12,13 +13,16 @@ potion::potion(){
 potion::~potion(){
 }
 
-potion::potion(int uses,double price):item(uses,price,300){
+potion::potion(double price):item(3,price,300){
 	
 }
 
-string potion::toString()const{
+string potion::toString(int op)const{
 	stringstream ss;
-	ss<<"Potion: Heals up to "<<value<<" HP. "<<currUses<<"/"<<uses;
+	ss<<"Potion - "<<currUses<<"/"<<uses;
+	if(op==1){
+		ss<<" "<<item::toString(1);
+	}
 	return ss.str(); 
 }
 
