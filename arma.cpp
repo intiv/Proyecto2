@@ -15,6 +15,10 @@ arma::arma(string atribute,double damage):atribute(atribute){
 	this->currDur=100;
 }
 
+arma::~arma(){
+
+}
+
 double arma::getDamage()const{ 
 	return this->damage;
 }

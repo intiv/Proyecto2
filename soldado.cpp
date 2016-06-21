@@ -1,7 +1,4 @@
 #include "soldado.h"
-#include "arma.h"
-#include "armadura.h"
-#include "item.h"
 #include<vector>
 #include<string>
 #include<sstream>

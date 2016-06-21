@@ -15,6 +15,10 @@ armadura::armadura(string atribute, double defense):atribute(atribute){
 	this->currDur=this->durability;
 }
 
+armadura::~armadura(){
+
+}
+
 string armadura::getAtribute()const{
 	return this->atribute;
 }

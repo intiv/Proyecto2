@@ -10,6 +10,7 @@ class arma{
 	int durability, currDur;
  public:
 	arma(string,double=100.0);
+	virtual ~arma();
 	double getDamage()const;
 	void setDamage(double);
 	string getAtribute()const;

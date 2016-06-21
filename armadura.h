@@ -11,6 +11,7 @@ class armadura{
  public:
 	armadura(string,double=100.0);
 	string getAtribute()const;
+	virtual ~armadura();
 	void setAtribute(const string&);
 	void setDefense(double);
 	double getDefense()const;	

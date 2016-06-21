@@ -36,7 +36,7 @@ int chartoint(int);
 
 int main(int argc, char* argv[]){
 	initscr();	
-	int x,y,enemigo=0;
+	int x,y;
 	vector<soldado*> enemies(6);
 	noecho();
 	const string atrs[6]={"N/A","Fire","Ice","Electricity","Light","Dark"};
@@ -149,8 +149,6 @@ int main(int argc, char* argv[]){
         printPJ(enemies.at(vs),y,x);
 	bool play=true;
 	pj->addItem(new potion(3,100));
-	pj->addItem(new powder(3,100));
-	pj->addItem(new elixir(3,100));
 	while(play){
 		ClearScreen(y,x);
 		mvprintw(13,0,"<Status>");
@@ -200,8 +198,7 @@ int main(int argc, char* argv[]){
 							press();
 						}
 					}else if(m==49){
-						int h=hit(pj,enemies.at(vs));
-						if(pj->atacar(enemies.at(vs),h)){
+						if(pj->atacar(enemies.at(vs),100)){
 							printPJ(pj,y,x);
 							printPJ(enemies.at(vs),y,x);
 						}else{
@@ -217,9 +214,8 @@ int main(int argc, char* argv[]){
 				turno=2;
 			}
 		}else if(turno==2){
-			int h=hit(enemies.at(vs),pj);
 			//if(enemies.at(vs)->getCurrHP()>=enemies.at(vs)->getHP()*0.5||enemies.at(vs)->invSize()==0){
-				if(enemies.at(vs)->atacar(pj,h)){
+				if(enemies.at(vs)->atacar(pj,100)){
                                		printPJ(pj,y,x);
                                 	printPJ(enemies.at(vs),y,x);
                         	}else{
@@ -601,7 +597,7 @@ int chartoint(int index){
 void printPJ(soldado* pj, int& y, int& x){
 	if(pj->getName().compare("Shie")==0){
 		attron(COLOR_PAIR(2));
-		mvprintw(y/2-22,x/2-10,"Informacion del personaje:");
+		mvprintw(y/2-22,x/2-10,"Character Window:");
 		mvprintw(y/2-20,x/2-10,pj->toString().c_str());
 		attroff(COLOR_PAIR(2));
 		attron(COLOR_PAIR(1));
@@ -627,7 +623,7 @@ void printPJ(soldado* pj, int& y, int& x){
 		attroff(COLOR_PAIR(1));
 	}else{
 		attron(COLOR_PAIR(2));
-		mvprintw(y/2,x/2-10,"Informacion del Enemigo:");
+		mvprintw(y/2,x/2-10,"Enemy Window:");
 		
                 mvprintw(y/2+2,x/2-10,pj->toString().c_str());
 		attroff(COLOR_PAIR(2));
@@ -737,36 +733,11 @@ int menu(){
 			return key;
 		}	
 	}
+	return 1;
 }
 
-int hit(const soldado* p1,const soldado* p2){
-	int chance;
-	if(typeid(*p1)==typeid(espadachin)){
-		chance=105;
-	}else if(typeid(*p1)==typeid(mago)){
-		chance=95;
-	}else{
-		chance=90;
-	}
-	if(p1->getWeapon()->getCurrDur()>0&&p2->getArmor()->getCurrDur()>0){
+void pueblo(soldado* pj){
 	
-		if(typeid(*p2)==typeid(espadachin)){
-       	        	chance-=20;
-		}else if(typeid(*p1)==typeid(mago)){
-       	        	chance-=10;
-       	 	}else{
-                	chance+=5;
-        	}
-	
-		if(p2->getArmor()->getAtribute().compare("Electricity")==0){
-			chance-=20;
-		}
-		return chance;
-	}else if(p1->getWeapon()->getCurrDur()<=0&&p2->getArmor()->getCurrDur()>0){
-		return 0;
-	}else if(p1->getWeapon()->getCurrDur()>0&&p2->getArmor()->getCurrDur()<=0){
-		return chance;	
-	}
 }
 
 void press(){
