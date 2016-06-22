@@ -13,6 +13,7 @@ armadura::armadura(string atribute, double defense):atribute(atribute){
 	}
 	this->durability=100;
 	this->currDur=this->durability;
+	this->upgrades=0;
 }
 
 armadura::~armadura(){
@@ -47,8 +48,19 @@ int armadura::getCurrDur()const{
 	return this->currDur;
 }	
 
+int armadura::getUpgrades()const{
+	return this->upgrades;
+}
+
 void armadura::setCurrDur(int nDur){
 	this->currDur=nDur;
+}
+
+void armadura::upgrade(){
+	upgrades++;
+}
+void armadura::setUpgrades(const int& nUp){
+	this->upgrades=nUp;
 }
 /*
 string armadura::toString()const{

@@ -13,6 +13,7 @@ arma::arma(string atribute,double damage):atribute(atribute){
 	}
 	this->durability=100;
 	this->currDur=100;
+	this->upgrades=0;
 }
 
 arma::~arma(){
@@ -38,8 +39,19 @@ int arma::getDurability()const{
 	return this->durability;
 }
 
+int arma::getUpgrades()const{
+	return this->upgrades;
+}
 void arma::setDurability(int nDur){
 	this->durability=nDur;
+}
+
+void arma::upgrade(){
+	upgrades++;
+}
+
+void arma::setUpgrades(const int& nUp){
+	this->upgrades=nUp;
 }
 
 void arma::setDamage(double nDmg){

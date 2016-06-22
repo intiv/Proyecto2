@@ -13,7 +13,7 @@ potion::potion(){
 potion::~potion(){
 }
 
-potion::potion(double price):item(3,price,300){
+potion::potion(double price):item(3,price,500){
 	
 }
 

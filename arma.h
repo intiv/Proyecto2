@@ -7,7 +7,7 @@ class arma{
  protected:
 	double damage;
 	string atribute;
-	int durability, currDur;
+	int durability, currDur, upgrades;
  public:
 	arma(string,double=100.0);
 	virtual ~arma();
@@ -19,5 +19,8 @@ class arma{
 	void setDurability(int);
 	void setCurrDur(int);
 	int getCurrDur()const;
+	void upgrade();
+	int getUpgrades()const;
+	void setUpgrades(const int&);
 	virtual string toString()const=0;
 };

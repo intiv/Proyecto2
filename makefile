@@ -1,8 +1,8 @@
 guerra:	arma.o armadura.o item.o soldado.o lanza.o espada.o magia.o robe.o ligera.o pesada.o mago.o espadachin.o lancero.o potion.o powder.o elixir.o main.o
-	g++ arma.o armadura.o item.o soldado.o lanza.o espada.o magia.o robe.o ligera.o pesada.o mago.o espadachin.o lancero.o potion.o powder.o elixir.o main.o -Wall -Wextra -lncurses -o guerra
+	g++ arma.o armadura.o item.o soldado.o lanza.o espada.o magia.o robe.o ligera.o pesada.o mago.o espadachin.o lancero.o potion.o powder.o elixir.o main.o -lncurses -o guerra
 
 main.o:	main.cpp arma.h armadura.h item.h soldado.h lancero.h espadachin.h mago.h ligera.h robe.h magia.h espada.h lanza.h potion.h powder.h elixir.h
-	g++ -c main.cpp
+	g++ -c main.cpp -std=c++11
 
 potion.o:	potion.cpp potion.h item.h
 	g++ -c potion.cpp

@@ -21,12 +21,15 @@
 #include<cstdlib>
 #include<ctime>
 #include<vector>
-#include<iomanip>
+#include<iostream>
+#include<fstream>
 
+using std::ofstream;
+using std::ifstream;
 using std::string;
 using std::stringstream;
 using std::vector;
-using std::setprecision;
+using std::stoi;
 
 void ClearScreen(int&,int&);
 void printPJ(soldado*,int&,int&);
@@ -35,24 +38,49 @@ void heal(soldado*);
 int menu();
 int chartoint(int);
 void printcity(int);
-void pueblo(int&,int&,soldado*,int,vector<item*>&);
+void pueblo(int&,int&,soldado*,int,vector<item*>&,int*);
+bool FileExists(const char*);
+void save(int,int*,int,int);
 
 int main(int argc, char* argv[]){
 	initscr();	
-	int x,y;
+	int x,y,weapUps=0,armorUps=0;
+	int vs=0;
+	bool play=true;
 	vector<soldado*> enemies(6);
 	vector<item*> shop;
-	shop.push_back(new potion(150));
-	shop.push_back(new potion(150));
-	shop.push_back(new potion(150));
-	shop.push_back(new powder(200));
-	shop.push_back(new powder(200));
-	shop.push_back(new elixir(500));
-	noecho();
+	int datosShop[7]={0,0,0,0,0,0,0};
+	int cont=0;
 	const string atrs[6]={"N/A","Fire","Ice","Electricity","Light","Dark"};
 	soldado* pj=0;
 	arma* weap=0;
 	armadura* arm=0;
+	weap=new espada(atrs[4],120);
+	weap->setDurability(200);
+	arm=new ligera(atrs[0],60);
+	pj=new espadachin("Shie",weap,arm,650);
+	enemies.at(0)=new espadachin("Von",new espada(atrs[0],150),new ligera(atrs[0],60),650);
+	enemies.at(1)=new mago("Ilya",new magia(atrs[1],200),new robe(atrs[0],60),800);
+	enemies.at(2)=new lancero("Aran",new lanza(atrs[2],220),new pesada(atrs[2],150),1400);
+	enemies.at(2)->getWeapon()->setDurability(160);
+	enemies.at(2)->getArmor()->setDur(200);
+	enemies.at(2)->getWeapon()->setCurrDur(160);
+        enemies.at(2)->getArmor()->setCurrDur(200);
+	enemies.at(3)=new mago("Lugh",new magia(atrs[5],200),new robe(atrs[5],110),1600);
+	enemies.at(4)=new lancero("Raiden",new lanza(atrs[3],430),new pesada(atrs[1],280),2350);
+	enemies.at(4)->getWeapon()->setDurability(200);
+        enemies.at(4)->getArmor()->setDur(200);
+	enemies.at(4)->getWeapon()->setCurrDur(200);
+        enemies.at(4)->getArmor()->setCurrDur(200);
+	enemies.at(5)=new espadachin("Jean",new espada(atrs[5],380),new ligera(atrs[5],320),3000);
+	enemies.at(5)->getWeapon()->setDurability(500);
+        enemies.at(5)->getArmor()->setDur(500);
+	enemies.at(5)->getWeapon()->setCurrDur(500);
+        enemies.at(5)->getArmor()->setCurrDur(500);
+	if(FileExists("Shop.txt")){
+	}
+	noecho();
+	curs_set(0);
 	getmaxyx(stdscr,y,x);
 	start_color();
 	init_color(COLOR_YELLOW,555,455,0);
@@ -66,6 +94,7 @@ int main(int argc, char* argv[]){
 	init_pair(4,COLOR_RED,COLOR_BLACK);
 	init_pair(5,COLOR_CYAN,COLOR_BLACK);
 	init_pair(6,COLOR_MAGENTA,COLOR_BLACK);
+	init_pair(7,COLOR_GREEN,COLOR_BLACK);
 	attron(COLOR_PAIR(2));
 	if(x<165||y<40){
 		while(x<165||y<40){
@@ -82,37 +111,141 @@ int main(int argc, char* argv[]){
 		mvprintw(y/2-20,x/2-25,"Your terminal does not support colors, you will not be able to live the game's full experience");	
 		press();
 	}
-	enemies.at(0)=new espadachin("Von",new espada(atrs[0],150),new ligera(atrs[0],60),650);
-	enemies.at(1)=new mago("Ilya",new magia(atrs[1],210),new robe(atrs[0],60),1000);
-	enemies.at(2)=new lancero("Aran",new lanza(atrs[2],220),new pesada(atrs[2],180),1500);
-	enemies.at(2)->getWeapon()->setDurability(160);
-	enemies.at(2)->getArmor()->setDur(200);
-	enemies.at(2)->getWeapon()->setCurrDur(160);
-        enemies.at(2)->getArmor()->setCurrDur(200);
-	enemies.at(3)=new mago("Lugh",new magia(atrs[5],200),new robe(atrs[5],130),1600);
-	enemies.at(4)=new lancero("Raiden",new lanza(atrs[3],410),new pesada(atrs[1],280),2200);
-	enemies.at(4)->getWeapon()->setDurability(200);
-        enemies.at(4)->getArmor()->setDur(200);
-	enemies.at(4)->getWeapon()->setCurrDur(200);
-        enemies.at(4)->getArmor()->setCurrDur(200);
-	enemies.at(5)=new espadachin("Jean",new espada(atrs[5],400),new ligera(atrs[5],350),3000);
-	enemies.at(5)->getWeapon()->setDurability(500);
-        enemies.at(5)->getArmor()->setDur(500);
-	enemies.at(5)->getWeapon()->setCurrDur(500);
-        enemies.at(5)->getArmor()->setCurrDur(500);
 	ClearScreen(y,x);
+	vector<string> datos;
+	while(true){
+	
+	ClearScreen(y,x);
+	attron(COLOR_PAIR(1));
+	mvprintw(y/2-6,x/2-30,"^^^^^^^^^^^^^^^^^^^^");
+	mvprintw(y/2-5,x/2-30,"& ~ Crystal Oath ~ &");
+	mvprintw(y/2-4,x/2-30,"&   ------------   &");
+	mvprintw(y/2-3,x/2-30,"& 1.- New Game     &");
+	mvprintw(y/2-2,x/2-30,"& 2.- Load Game    &");
+	mvprintw(y/2-1,x/2-30,"& 3.- How to Play  &");
+	  mvprintw(y/2,x/2-30,"& 4.- Quit         &");
+	mvprintw(y/2+1,x/2-30,"^^^^^^^^^^^^^^^^^^^^");
+	attroff(COLOR_PAIR(1));
+	int mainm=getch();
+		if(mainm==49){
+			mvprintw(y/2,x/2,"Hola");
+			getch();
+			ofstream salida;
+			if(FileExists("Datos.txt")){
+				salida.open("Datos.txt",std::ios::out|std::ios::trunc);
+				salida<<"No,200,0,0,0";
+				salida.close();
+			}
+			if(FileExists("Shop.txt")){
+				salida.open("Shop.txt",std::ios::out|std::ios::trunc);
+				salida<<"0,0,0,0,0,0,0";
+				salida.close();
+			}
+			for(int j=0;j<7;j++){
+				datosShop[j]=0;
+			}
+			vs=0;
+			
+			break;
+		}else if(mainm==50){
+			if(FileExists("Datos.txt")){
+				datos.clear();
+				ifstream reader("Datos.txt");
+				string line;
+				getline(reader,line);
+				stringstream ss(line);
+				while(ss.good()){
+					string sub;
+					getline(ss,sub,',');
+					datos.push_back(sub);
+				}
+				reader.close();
+			}
+			if(datos.size()>0){	
+				if(datos.at(0)=="Si"){
+					if(FileExists("Shop.txt")){
+						ifstream reader("Shop.txt");
+						string line;
+						getline(reader,line);
+						stringstream ss(line);
+						while(ss.good()){
+							string sub;
+							getline(ss,sub,',');
+							datosShop[cont]=stoi(sub,NULL,0);
+							cont++;
+						}
+						reader.close();
+					}
+					vs=stoi(datos.at(1),NULL,0);
+					pj->earn(stoi(datos.at(2),NULL,0)-200);
+					weapUps=stoi(datos.at(3),NULL,0);
+					armorUps=stoi(datos.at(4),NULL,0);
+					for(int i=0;i<weapUps;i++){
+						pj->getWeapon()->upgrade();
+						pj->getWeapon()->setDamage(pj->getWeapon()->getDamage()+35);
+						pj->getWeapon()->setDurability(pj->getWeapon()->getDurability()+35);
+					}
+					for(int j=0;j<armorUps;j++){
+						pj->getArmor()->upgrade();
+						pj->getArmor()->setDefense(pj->getArmor()->getDefense()+25);
+						pj->getArmor()->setDur(pj->getArmor()->getDur()+25);
+					}
+					pj->getWeapon()->setCurrDur(pj->getWeapon()->getDurability());
+					pj->getArmor()->setCurrDur(pj->getArmor()->getDur());
+					pj->setHP(pj->getHP()+vs*200);
+					pj->setCurrHP(pj->getHP());
+					mvprintw(y/2-3,x/2-30,"Game loaded succesfully!");
+					press();
+					break;
+				}else{
+					break;
+				}
+			}else{
+				mvprintw(y/2-3,x/2-30,"Something went wrong while loading the game!");
+				press(); 
+				break;
+			}
+		}else if(mainm==51){
+
+		}else if(mainm==52){
+			ClearScreen(y,x);
+			mvprintw(y/2,x/2,"Thanks for playing!");
+			getch();
+			for(int i=0;i<enemies.size();i++){
+				delete enemies[i];
+			}
+			delete pj;
+			erase();
+			echo();
+			return 0;
+		}
+	}
+	if(datosShop[0]==0)
+		shop.push_back(new potion(150));
+	if(datosShop[1]==0)
+		shop.push_back(new potion(150));
+	if(datosShop[2]==0)	
+		shop.push_back(new potion(150));
+	if(datosShop[3]==0)
+		shop.push_back(new powder(200));
+	if(datosShop[4]==0)
+		shop.push_back(new powder(200));
+	if(datosShop[5]==0)
+		shop.push_back(new elixir(500));
+	if(datosShop[6]==0)
+		shop.push_back(new elixir(500));
 	/*short int r,g,b;
 	color_content(3,&r,&g,&b);
 	mvprintw(0,0,"Rojo: %d, verde: %d, azul: %d",r,g,b);
 	press();*/
-	int ch;
+	/*int ch;
 	while((ch=getch())!=27){
 		move(1,1);
 		printw("Keycode: %d     ",ch);
 		move(0,0);
 		printw("Letra: %c",ch);
 		refresh();
-	}
+	}*/
 
 	/*for(int i=0;i<enemies.size();i++){
 		ClearScreen(y,x);
@@ -121,10 +254,7 @@ int main(int argc, char* argv[]){
 	}*/
 	move(0,0);
 	ClearScreen(y,x);
-	weap=new espada(atrs[4],120);
-	weap->setDurability(200);
-	arm=new ligera(atrs[0],60);
-	pj=new espadachin("Shie",weap,arm,650);
+	if(vs==0){
 	mvprintw(y/2-3,x/2-65,"Shie, 18 years old, is a master of the sword and a princess; Daughter of the missing king of the Baste kingdom, Marcus III.");
 	mvprintw(y/2-2,x/2-65,"After hearing of the sudden disappearance of her father, she took the sacred royal blade of light, Darkbane, and set out to find the king");
 	mvprintw(y/2-1,x/2-65,"This is her story, as she fights fierce warriors and discovers crushing revelations along her journey to find her father");
@@ -151,13 +281,13 @@ int main(int argc, char* argv[]){
 	press();
 	mvprintw(y/2+4,x/2-40,"Shie: We'll see about that! En garde!");
 	press();
+	}
 	attroff(COLOR_PAIR(2));
-	int turno=1,vs=0;
+	int turno=1;
 	ClearScreen(y,x);
 	mvprintw(0,0,"Chapter 1");
 	printPJ(pj,y,x);
         printPJ(enemies.at(vs),y,x);
-	bool play=true;
 	pj->addItem(new potion(100));
 	while(play){
 		ClearScreen(y,x);
@@ -168,6 +298,19 @@ int main(int argc, char* argv[]){
 		}
 		if(enemies.at(vs)->isFrozen()){
 			mvprintw(16,0,"-%s is frozen! %s's turn will be skipped!",enemies.at(vs)->getName(),enemies.at(vs)->getName());
+		}
+		if(vs==0){
+			mvprintw(0,40,"Tip - Menu options: Attack deals damage to enemy based on several factors. Inventory lets you use items if you have any");
+		}else if(vs==1){
+			mvprintw(0,40,"Tip - Mages deal alot of damage, Plus fire weapons can burn your extra damage. Heal often and defeat your enemy quickly!");
+		}else if(vs==2){
+			mvprintw(0,40,"Tip - Halberdiers have high defense but have low damage and hit chance. Make sure to keep an eye on your equipment's durability");
+		}else if(vs==3){
+			mvprintw(0,40,"Tip - Dark weapons deal huge amounts of damage and heal the enemy for half the damage dealt. Defeat your enemy quickly!");
+		}else if(vs==4){
+			mvprintw(0,40,"Tip - Electric weapons can reduce your equipment's durability. Use powders or elixirs to repair them!");
+		}else if(vs==5){
+			mvprintw(0,40,"Tip - This is your final fight! Use everything you've learned in your last fight and use any items you may need. Don't hold anything back!");
 		}	
 		printcity(vs);
 		if(turno==1){
@@ -203,6 +346,8 @@ int main(int argc, char* argv[]){
 									opValida=true;
 								}else if(index==48+pj->invSize()){
 									ClearScreen(y,x);
+									printPJ(pj,y,x);
+									printPJ(enemies.at(vs),y,x);
 									itemValido=true;
 								}
 							}
@@ -242,8 +387,13 @@ int main(int argc, char* argv[]){
 		ClearScreen(y,x);
 		mvprintw(13,0,"<Status>");
 		mvprintw(14,0," ------ ");
-		pj->state();
-		enemies.at(vs)->state();
+		if(enemies.at(vs)->getCurrHP()>0){
+			pj->state();
+		}
+		if(pj->getCurrHP()>0){
+			enemies.at(vs)->state();
+		}
+		printcity(vs);
 		if(pj->isFrozen()){
 			mvprintw(17,0,"-Shie is frozen! Your next turn will be skipped!");
 		}
@@ -274,11 +424,13 @@ int main(int argc, char* argv[]){
 			}
 			pj->setHP(pj->getHP()+200);
 			pj->getWeapon()->setDamage(pj->getWeapon()->getDamage()+20);
+			pj->Burn(false);
 			ClearScreen(y,x);
 			mvprintw(y/2-3,x/2-30,"Level up! Max HP + 200, Attack + 20!");
 			press();
 			attron(COLOR_PAIR(2));
 			if(vs==1){
+				pj->earn(400);
 				mvprintw(y/2,x/2-40,"Shie: *pant* Who sent you to kill me!? Where is my father!?");
 				press();
 				mvprintw(y/2+2,x/2-40,"Von: Heh, you fool...Lord Raiden will have..your head...");
@@ -300,7 +452,6 @@ int main(int argc, char* argv[]){
 				ClearScreen(y,x);
 				mvprintw(y/2-3,x/2-20,"~Chapter 2: Intervention~");
 				mvprintw(y/2-2,x/2-20,"-------------------------");
-				press();
 				mvprintw(y/2,x/2-40,"*At the old lady's house*");
 				mvprintw(y/2+2,x/2-40,"Old lady: I heard what that man said, I'm afraid it's true...");
 				press();
@@ -322,15 +473,15 @@ int main(int argc, char* argv[]){
 				ClearScreen(y,x);	
 				mvprintw(y/2-3,x/2-20,"~Chapter 2: Intervention~");
 				mvprintw(y/2-2,x/2-20,"-------------------------");
-				press();
 				mvprintw(y/2,x/2-40,"Spy: Go to the White Forest, someone awaits you there.");
 				press();
-				pueblo(y,x,pj,vs,shop);
+				pueblo(y,x,pj,vs,shop,datosShop);
 				mvprintw(y/2+2,x/2-40,"And so, Shie set out for the White Forest, a huge maze of enchanted trees");
 				mvprintw(y/2+3,x/2-40,"There, she found a fire mage who seemed like she had been meditating; as though waiting for someone");
 				mvprintw(y/2+4,x/2-40,"Unfortunately, upon seeing Shie, the mage attacked without giving her a chance to even speak!");
 				press();
 			}else if(vs==2){
+				pj->earn(750);
 				mvprintw(y/2,x/2-40,"Mage: Enough! You have proven yourself. I am an ally of king Marcus!");
 				press();
 				mvprintw(y/2+2,x/2-40,"Shie: Huh? How can I know you are saying the truth?");
@@ -367,7 +518,7 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2-2,x/2-20,"--------------------------------");
 				mvprintw(y/2,x/2-40,"However, the city of Krast had been ocupied by unknown soldiers, commanded by a tall Halberdier");
 				press();
-				pueblo(y,x,pj,vs,shop);
+				pueblo(y,x,pj,vs,shop,datosShop);
 				mvprintw(y/2-3,x/2-20,"~Chapter 3: Honor, Death, Glory~");
 				mvprintw(y/2-2,x/2-20,"--------------------------------");
 				mvprintw(y/2+1,x/2-40,"Shie managed to sneak past many soldiers, but was stopped in front of the cathedral by the commander, Aran!");
@@ -379,6 +530,7 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Aran: Very well then, let us have a honorable battle! Me and my Ice equipment are undefeated!");
 				press();
 			}else if(vs==3){
+				pj->earn(700);
 				mvprintw(y/2,x/2-40,"Aran: Hng! You are a master of the sword...but you are far too late...Priest Owain will be...");
 				press();
 				mvprintw(y/2+2,x/2-40,"Shie: No, I must save the Priest! Hang on, I'm coming!");
@@ -416,6 +568,7 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+4,x/2-40,"Shie: Thank you Great Priest, I shall use your blessing to defeat these malicious magician!");
 				press();
 			}else if(vs==4){
+				pj->earn(1000);
 				mvprintw(y/2,x/2-40,"Lugh: Damn your light magic...DAMN YOU PRINCESS!!");
 				press();
 				mvprintw(y/2+2,x/2-40,"Shie: Repent and pray, Maybe then God will have mercy on your soul!");
@@ -470,6 +623,7 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2-2,x/2-20,"------------------------");
 				mvprintw(y/2,x/2-40,"Shie: I will go. I'm coming, RAIDEN! JEAN!");
 				press();
+				pueblo(y,x,pj,vs,shop,datosShop);
 				mvprintw(y/2+1,x/2-40,"The princess set out for the Mailfaisance Tower");
 				mvprintw(y/2+2,x/2-40,"Lots of questions spiraled her mind. Why did Raiden betray the king?");
 				mvprintw(y/2+3,x/2-40,"Is her father at the tower? Is he truly alive? But most of all");
@@ -584,6 +738,19 @@ int main(int argc, char* argv[]){
 	}
 	press();
 	endwin();
+	
+	ofstream salida;
+	if(FileExists("Datos.txt")){
+		salida.open("Datos.txt",std::ios::out|std::ios::trunc);
+		salida<<"No,200,0,0,0";
+		salida.close();
+	}
+	if(FileExists("Shop.txt")){
+		salida.open("Shop.txt",std::ios::out|std::ios::trunc);
+		salida<<"0,0,0,0,0,0,0";
+		salida.close();
+	}
+
 	for(int i=0;i<enemies.size();i++){
 		delete enemies[i];
 	}	
@@ -632,6 +799,7 @@ int chartoint(int index){
 		case 52: return 4;
 		case 53: return 5;
 		case 54: return 6;
+		case 55: return 7;
 	}
 }
 void printPJ(soldado* pj, int& y, int& x){
@@ -776,30 +944,50 @@ int menu(){
 	return 1;
 }
 
-void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop){
-	while(true){
+void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop,int* datosShop){
+	bool town=true;
+	while(town){
 		ClearScreen(y,x);
-		mvprintw(y/2-4,x/2-30,"*********************************");
+		attron(COLOR_PAIR(5));
+		mvprintw(y/2-7,x/2-30,"Money: %dg",pj->getMoney());
+		attroff(COLOR_PAIR(5));
 		if(vs==1){
-			mvprintw(y/2-3,x/2-30,"*         -Town of Tir-         *");
+			attron(COLOR_PAIR(3));
+			mvprintw(y/2-5,x/2-30,"*         -Town of Tir-         *");
 		}else if(vs==2){
-			mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+			attron(COLOR_PAIR(4));
+			mvprintw(y/2-5,x/2-30,"*         -Krast City-          *");
 		}else if(vs==3){
-			mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+			attron(COLOR_PAIR(1));
+			mvprintw(y/2-5,x/2-30,"*         -Krast City-          *");
+		}else{
+			attron(COLOR_PAIR(6));
 		}
+		mvprintw(y/2-6,x/2-30,"*********************************");
+		
 			mvprintw(y/2-2,x/2-30,"*                               *");
-		mvprintw(y/2-1,x/2-30,"*  1.- Sleep at the Inn (100g)  *");
-		  mvprintw(y/2,x/2-30,"*  2.- Repair Equipment (100g)  *");
-		mvprintw(y/2+1,x/2-30,"*  3.- Upgrade Weapon   (200g)  *");
-		mvprintw(y/2+2,x/2-30,"*  4.- Upgrade Armor    (200g)  *");
-		mvprintw(y/2+3,x/2-30,"*  5.- Item Shop                *");
-		mvprintw(y/2+4,x/2-30,"*  6.- Leave Town (Fight)       *");
-		mvprintw(y/2+5,x/2-30,"*********************************");
+		mvprintw(y/2-4,x/2-30,"*  1.- Sleep at the Inn (100g)  *");
+		mvprintw(y/2-3,x/2-30,"*  2.- Repair Equipment (100g)  *");
+		mvprintw(y/2-2,x/2-30,"*  3.- Upgrade Weapon   (200g)  *");
+		mvprintw(y/2-1,x/2-30,"*  4.- Upgrade Armor    (200g)  *");
+		mvprintw(y/2,x/2-30,"*  5.- Item Shop                *");
+		mvprintw(y/2+1,x/2-30,"*  6.- Save Game                *");
+		mvprintw(y/2+2,x/2-30,"*  7.- Leave Town (Fight)       *");
+		mvprintw(y/2+3,x/2-30,"*********************************");
+		if(vs==1){
+			attroff(COLOR_PAIR(3));
+		}else if(vs==2){
+			attroff(COLOR_PAIR(4));
+		}else if(vs==3){
+			attroff(COLOR_PAIR(1));
+		}else{
+			attroff(COLOR_PAIR(6));
+		}
 		int key;
 		bool input=false;
 		while(!input){
 			key=getch();
-			if(key==49||key==50||key==51||key==52||key==53||key==54){
+			if(key==49||key==50||key==51||key==52||key==53||key==54||key==55){
 				input=true;
 			}
 		}
@@ -814,6 +1002,7 @@ void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop){
 					pj->setCurrHP(pj->getHP());
 					pj->pay(100);
 					mvprintw(y/2-3,x/2-30,"Sweet dreams Zzz...");
+					mvprintw(y/2-2,x/2-30,"HP fully restored!");
 					press();
 				}
 			}else{
@@ -829,6 +1018,7 @@ void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop){
 					pj->getArmor()->setCurrDur(pj->getArmor()->getDur());
 					pj->getWeapon()->setCurrDur(pj->getWeapon()->getDurability());
 					mvprintw(y/2-3,x/2-30,"Blacksmith: Very well, I'll leave your equipment like new!");
+					mvprintw(y/2-2,x/2-30,"Weapon and Armor repaired to max Durability!");
 					pj->pay(100);
 					press();
 				}
@@ -837,36 +1027,195 @@ void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop){
                                 press();
                         }
 		}else if(op==3){
-			
-		}else if(op==4){
+			if(pj->getMoney()>=200){
+				if(pj->getWeapon()->getCurrDur()>0){
+					if(pj->getWeapon()->getDamage()<=465){
+						if(pj->getWeapon()->getDamage()+35<500){
+							pj->getWeapon()->setDamage(pj->getWeapon()->getDamage()+35);
+						}else{
+							pj->getWeapon()->setDamage(500);
 
+						}
+						pj->getWeapon()->setDurability(pj->getWeapon()->getDurability()+35);
+						pj->getWeapon()->upgrade();
+						mvprintw(y/2-3,x/2-30,"Blacksmith: This'll be the finest blade you'll ever darn see in your life!");
+						mvprintw(y/2-2,x/2-30,"+35 Damage and max Durability to Darkbane!");
+						pj->pay(200);
+						press();
+					}else if(pj->getWeapon()->getDamage()==500){
+						mvprintw(y/2-3,x/2-30,"Blacksmith: I can't upgrade this blade anymore, its the finest it can be!");
+						press();
+					}else{
+						mvprintw(y/2-3,x/2-30,"Blacksmith: This'll be the finest blade you'll ever darn see in your life!");
+						mvprintw(y/2-2,x/2-30,"+35 Damage and max Durability to Darkbane!");
+						pj->getWeapon()->setDamage(500);
+						pj->getWeapon()->upgrade();
+						pj->pay(200);
+						press();
+					}
+
+				}else{
+					mvprintw(y/2,x/2-30,"Your sword is broken! You must repair it before upgrading it!");
+					press();
+				}
+			}else{
+				mvprintw(y/2-3,x/2-30,"Not enough money!");
+				press();
+			}
+		}else if(op==4){
+			if(pj->getMoney()>=200){
+				if(pj->getArmor()->getCurrDur()>0){
+					if(pj->getArmor()->getDefense()<=475){
+						if(pj->getArmor()->getDefense()+25<500){
+							pj->getArmor()->setDefense(pj->getArmor()->getDefense()+25);
+						}else{
+							pj->getArmor()->setDefense(500);
+
+						}
+						pj->getArmor()->setDur(pj->getArmor()->getDur()+25);
+						pj->getArmor()->upgrade();
+						mvprintw(y/2-3,x/2-30,"Blacksmith: I'll make this armor the shield of your life!");
+						mvprintw(y/2-2,x/2-30,"+25 Defense and max Durability to your armor!");
+						pj->pay(200);
+						press();
+					}else if(pj->getArmor()->getDefense()==500){
+						mvprintw(y/2-3,x/2-30,"Blacksmith: I can't upgrade this armor anymore, its the finest it can be!");
+						press();
+					}else{
+						mvprintw(y/2-3,x/2-30,"Blacksmith: I'll make this armor the shield of your life!");
+						pj->getArmor()->setDefense(500);
+						pj->getArmor()->upgrade();
+						mvprintw(y/2-2,x/2-30,"+25 Defense and max Durability to your armor!");
+						pj->pay(200);
+						press();
+					}
+
+				}else{
+					mvprintw(y/2,x/2-30,"Your armor is broken! You must repair it before upgrading it!");
+					press();
+				}
+			}else{
+				mvprintw(y/2-3,x/2-30,"Not enough money!");
+				press();
+			}
 		}else if(op==5){
+			attron(COLOR_PAIR(4));
+				mvprintw(y/2-4,x/2-30,"***************************");
 			if(vs==1){
-				mvprintw(y/2-3,x/2-30,"*         -Town of Tir-         *");
+				mvprintw(y/2-3,x/2-30,"*      -Town of Tir-      *");
 			}else if(vs==2){
-				mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+				mvprintw(y/2-3,x/2-30,"*      -Krast City-       *");
 			}else if(vs==3){
-				mvprintw(y/2-3,x/2-30,"*         -Krast City-          *");
+				mvprintw(y/2-3,x/2-30,"*      -Krast City-       *");
+			}else{
+				mvprintw(y/2-3,x/2-30,"*      -Drake City-       *");   
 			}
 			mvprintw(y/2-2,x/2-30,"*                         *");
 			mvprintw(y/2-1,x/2-30,"*     Item  -  Price      *");
 			mvprintw(y/2,x/2-30,"*   -------------------   *");
-			for(int i=0;i<shop.size();i++){
+			for(int i=0;i<=shop.size();i++){
 			        mvprintw(y/2+1+i,x/2-30,"*                         *");
 			}
+			attroff(COLOR_PAIR(4));
 			for(int j=0;j<shop.size();j++){
+				if(typeid(*shop[j])==typeid(elixir)){
+					attron(COLOR_PAIR(3));
+				}else if(typeid(*shop[j])==typeid(potion)){
+					attron(COLOR_PAIR(7));
+				}else if(typeid(*shop[j])==typeid(powder)){
+					attron(COLOR_PAIR(5));
+				}else{
+					attron(COLOR_PAIR(1));
+				}
 				mvprintw(y/2+1+j,x/2-27,"%d.- %s",j,shop[j]->toString(1).c_str());
+				if(typeid(*shop[j])==typeid(elixir)){
+					attroff(COLOR_PAIR(3));
+				}else if(typeid(*shop[j])==typeid(potion)){
+					attroff(COLOR_PAIR(7));
+				}else if(typeid(*shop[j])==typeid(powder)){
+					attroff(COLOR_PAIR(5));
+				}else{
+					attroff(COLOR_PAIR(1));
+				}
 			}
-	     		mvprintw(y/2+1+shop.size(),x/2-30,"***************************");
-			getch();
-			break;
+			attron(COLOR_PAIR(4));
+			mvprintw(y/2+1+shop.size(),x/2-27,"%d.- Exit Shop",shop.size());
+	     		mvprintw(y/2+2+shop.size(),x/2-30,"***************************");
+			attroff(COLOR_PAIR(4));
+			bool compra=false;
+			while(!compra){
+				bool bought=false;
+				int choice=getch();
+				if(shop.size()>0){
+					choice=chartoint(choice);
+					if(choice>=0&&choice<0+shop.size()){
+						bought=true;
+					}else if(choice==shop.size()){
+						compra=true;
+					}
+					
+					if(bought){
+						if(shop.at(choice)->getPrice()>pj->getMoney()){
+							mvprintw(y/2-6,x/2-30,"Not enough money!");
+							press();
+						}else{
+							mvprintw(y/2-6,x/2-30,"%s added to your inventory!",shop.at(choice)->toString(1).c_str());
+							datosShop[choice]=1;
+							pj->addItem(shop.at(choice));
+							pj->pay(shop.at(choice)->getPrice());
+							shop.erase(shop.begin()+choice);
+							press();
+						}
+						compra=true;
+					}
+				}else{
+					ClearScreen(y,x);
+					mvprintw(y/2-3,x/2-30,"No more items left in the shop!");
+					compra=true;
+					press();
+				}
+			}
 		}else if(op==6){
-			break;
+			if(FileExists("Datos.txt")){
+				ofstream salida;
+				salida.open("Datos.txt",std::ios::out|std::ios::trunc);
+				salida<<"Si,"<<vs<<","<<pj->getMoney()<<","<<pj->getWeapon()->getUpgrades()<<","<<pj->getArmor()->getUpgrades();
+				salida.close();
+				mvprintw(y/2-3,x/2-30,"Game saved with success!");
+				press();
+			}else{
+				mvprintw(y/2-3,x/2-30,"An error occured while saving your game, try again!");
+				press();
+			}
+			if(FileExists("Shop.txt")){
+				ofstream salida;
+				salida.open("Shop.txt",std::ios::out|std::ios::trunc);
+				for(int i=0;i<6;i++){
+					salida<<datosShop[i]<<",";
+				}
+				salida<<datosShop[6];
+			}
+		}else if(op==7){
+			town=false;
 		}
 	
 	}	
 }
 
+bool FileExists(const char* Archivo){
+	if(!ifstream(Archivo)){
+		ofstream crear(Archivo);
+		if(strcmp(Archivo,"Datos.txt")==0){
+			crear<<"No,0,300,0,0";
+		}else{
+			crear<<"0,0,0,0,0,0,0";
+		}
+		crear.close();
+		return true;
+	}else{
+		return true;
+	}
+}
 void press(){
 	int getkey;
 	while((getkey=getch())!=120){

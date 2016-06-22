@@ -55,6 +55,7 @@ bool soldado::isFrozen()const{
 	return this->frozen;
 }
 
+
 int soldado::getMoney()const{
 	return this->money;
 }
