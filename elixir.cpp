@@ -13,7 +13,7 @@ elixir::elixir(){
 elixir::~elixir(){
 }
 
-elixir::elixir(double price):item(1,price,100){
+elixir::elixir(double price):item(1,price,200){
 }
 
 string elixir::toString(int op)const{
@@ -26,12 +26,7 @@ string elixir::toString(int op)const{
 }
 
 void elixir::function(soldado* pj){
-	if((pj->getCurrHP()+value*7)>=pj->getHP()){
-		pj->setCurrHP(pj->getHP());
-	}else{
-		pj->setCurrHP(pj->getCurrHP()+value*7);
-	}
-
+	pj->setCurrHP(pj->getHP());
 	if((pj->getWeapon()->getCurrDur()+value)>=pj->getWeapon()->getDurability()){
 		pj->getWeapon()->setCurrDur(pj->getWeapon()->getDurability());
 	}else{

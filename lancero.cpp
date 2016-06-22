@@ -3,6 +3,7 @@
 #include "arma.h"
 #include "armadura.h"
 #include "ligera.h"
+#include "robe.h"
 #include<string>
 #include<sstream>
 #include<cstdlib>
@@ -20,7 +21,9 @@ lancero::~lancero(){
 bool lancero::atacar(soldado* enemy,int hit){
        	int chance=rand()%101;
 	if(typeid(*enemy->getArmor())==typeid(ligera)){
-		hit-=15;
+		hit-=25;
+	}else if(typeid(*enemy->getArmor())==typeid(robe)){
+		hit-=10;
 	}
 	if(chance<=hit){//Poli: hit% afecta al calcular si ataque conecta o falla
                 double dmg=this->weapon->getDamage();
@@ -81,7 +84,7 @@ bool lancero::atacar(soldado* enemy,int hit){
 		}else if(weapon->getAtribute().compare("Ice")==0){
 			if(enemy->getArmor()->getCurrDur()>0)
                         	dmg-=enemy->getArmor()->getDefense();
-                        if(chance<=15){
+                        if(chance<=20){
                                 enemy->Freeze(true);
                         }
                 }else{	

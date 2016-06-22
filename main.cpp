@@ -61,18 +61,18 @@ int main(int argc, char* argv[]){
 	pj=new espadachin("Shie",weap,arm,650);
 	enemies.at(0)=new espadachin("Von",new espada(atrs[0],150),new ligera(atrs[0],60),650);
 	enemies.at(1)=new mago("Ilya",new magia(atrs[1],200),new robe(atrs[0],60),800);
-	enemies.at(2)=new lancero("Aran",new lanza(atrs[2],220),new pesada(atrs[2],150),1400);
+	enemies.at(2)=new lancero("Aran",new lanza(atrs[2],220),new pesada(atrs[2],150),1600);
 	enemies.at(2)->getWeapon()->setDurability(160);
 	enemies.at(2)->getArmor()->setDur(200);
 	enemies.at(2)->getWeapon()->setCurrDur(160);
         enemies.at(2)->getArmor()->setCurrDur(200);
-	enemies.at(3)=new mago("Lugh",new magia(atrs[5],200),new robe(atrs[5],110),1600);
-	enemies.at(4)=new lancero("Raiden",new lanza(atrs[3],430),new pesada(atrs[1],280),2350);
+	enemies.at(3)=new mago("Lugh",new magia(atrs[5],200),new robe(atrs[5],110),1700);
+	enemies.at(4)=new lancero("Raiden",new lanza(atrs[3],430),new pesada(atrs[1],280),2500);
 	enemies.at(4)->getWeapon()->setDurability(200);
         enemies.at(4)->getArmor()->setDur(200);
 	enemies.at(4)->getWeapon()->setCurrDur(200);
         enemies.at(4)->getArmor()->setCurrDur(200);
-	enemies.at(5)=new espadachin("Jean",new espada(atrs[5],380),new ligera(atrs[5],320),3000);
+	enemies.at(5)=new espadachin("Jean",new espada(atrs[5],400),new ligera(atrs[5],320),3000);
 	enemies.at(5)->getWeapon()->setDurability(500);
         enemies.at(5)->getArmor()->setDur(500);
 	enemies.at(5)->getWeapon()->setCurrDur(500);
@@ -113,23 +113,19 @@ int main(int argc, char* argv[]){
 	}
 	ClearScreen(y,x);
 	vector<string> datos;
-	while(true){
-	
-	ClearScreen(y,x);
-	attron(COLOR_PAIR(1));
-	mvprintw(y/2-6,x/2-30,"^^^^^^^^^^^^^^^^^^^^");
-	mvprintw(y/2-5,x/2-30,"& ~ Crystal Oath ~ &");
-	mvprintw(y/2-4,x/2-30,"&   ------------   &");
-	mvprintw(y/2-3,x/2-30,"& 1.- New Game     &");
-	mvprintw(y/2-2,x/2-30,"& 2.- Load Game    &");
-	mvprintw(y/2-1,x/2-30,"& 3.- How to Play  &");
-	  mvprintw(y/2,x/2-30,"& 4.- Quit         &");
-	mvprintw(y/2+1,x/2-30,"^^^^^^^^^^^^^^^^^^^^");
-	attroff(COLOR_PAIR(1));
-	int mainm=getch();
+	while(true){	
+		ClearScreen(y,x);
+		attron(COLOR_PAIR(1));
+		mvprintw(y/2-6,x/2-30,"^^^^^^^^^^^^^^^^^^^^");
+		mvprintw(y/2-5,x/2-30,"& ~ Crystal Oath ~ &");
+		mvprintw(y/2-4,x/2-30,"&   ------------   &");
+		mvprintw(y/2-3,x/2-30,"& 1.- New Game     &");
+		mvprintw(y/2-2,x/2-30,"& 2.- Load Game    &");
+		mvprintw(y/2-1,x/2-30,"& 3.- Quit         &");
+		mvprintw(y/2,x/2-30,"^^^^^^^^^^^^^^^^^^^^");
+		attroff(COLOR_PAIR(1));
+		int mainm=getch();
 		if(mainm==49){
-			mvprintw(y/2,x/2,"Hola");
-			getch();
 			ofstream salida;
 			if(FileExists("Datos.txt")){
 				salida.open("Datos.txt",std::ios::out|std::ios::trunc);
@@ -194,6 +190,7 @@ int main(int argc, char* argv[]){
 					pj->getArmor()->setCurrDur(pj->getArmor()->getDur());
 					pj->setHP(pj->getHP()+vs*200);
 					pj->setCurrHP(pj->getHP());
+					ClearScreen(y,x);
 					mvprintw(y/2-3,x/2-30,"Game loaded succesfully!");
 					press();
 					break;
@@ -206,8 +203,6 @@ int main(int argc, char* argv[]){
 				break;
 			}
 		}else if(mainm==51){
-
-		}else if(mainm==52){
 			ClearScreen(y,x);
 			mvprintw(y/2,x/2,"Thanks for playing!");
 			getch();
@@ -222,18 +217,35 @@ int main(int argc, char* argv[]){
 	}
 	if(datosShop[0]==0)
 		shop.push_back(new potion(150));
+	else
+		pj->addItem(new potion(150));
 	if(datosShop[1]==0)
 		shop.push_back(new potion(150));
+	else
+		pj->addItem(new potion(150));
 	if(datosShop[2]==0)	
 		shop.push_back(new potion(150));
+	else
+		pj->addItem(new potion(150));
 	if(datosShop[3]==0)
 		shop.push_back(new powder(200));
+	else
+		pj->addItem(new powder(200));
+
 	if(datosShop[4]==0)
 		shop.push_back(new powder(200));
+	else
+		pj->addItem(new powder(200));
+	
 	if(datosShop[5]==0)
 		shop.push_back(new elixir(500));
+	else
+		pj->addItem(new elixir(500));
+
 	if(datosShop[6]==0)
 		shop.push_back(new elixir(500));
+	else
+		pj->addItem(new elixir(500));
 	/*short int r,g,b;
 	color_content(3,&r,&g,&b);
 	mvprintw(0,0,"Rojo: %d, verde: %d, azul: %d",r,g,b);
@@ -310,7 +322,7 @@ int main(int argc, char* argv[]){
 		}else if(vs==4){
 			mvprintw(0,40,"Tip - Electric weapons can reduce your equipment's durability. Use powders or elixirs to repair them!");
 		}else if(vs==5){
-			mvprintw(0,40,"Tip - This is your final fight! Use everything you've learned in your last fight and use any items you may need. Don't hold anything back!");
+			mvprintw(0,40,"Tip - This is your final fight! Use everything you've learned in your past battles and use any items you may need. Don't hold anything back!");
 		}	
 		printcity(vs);
 		if(turno==1){
@@ -362,10 +374,6 @@ int main(int argc, char* argv[]){
 						}else{
 							mvprintw(y/2,x/2,"Miss!!!");
 						}
-						opValida=true;
-					}else if(m==51){
-						ClearScreen(y,x);
-						play=false;
 						opValida=true;
 					}
 				}
@@ -430,7 +438,7 @@ int main(int argc, char* argv[]){
 			press();
 			attron(COLOR_PAIR(2));
 			if(vs==1){
-				pj->earn(400);
+				pj->earn(500);
 				mvprintw(y/2,x/2-40,"Shie: *pant* Who sent you to kill me!? Where is my father!?");
 				press();
 				mvprintw(y/2+2,x/2-40,"Von: Heh, you fool...Lord Raiden will have..your head...");
@@ -481,7 +489,7 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+4,x/2-40,"Unfortunately, upon seeing Shie, the mage attacked without giving her a chance to even speak!");
 				press();
 			}else if(vs==2){
-				pj->earn(750);
+				pj->earn(900);
 				mvprintw(y/2,x/2-40,"Mage: Enough! You have proven yourself. I am an ally of king Marcus!");
 				press();
 				mvprintw(y/2+2,x/2-40,"Shie: Huh? How can I know you are saying the truth?");
@@ -530,7 +538,7 @@ int main(int argc, char* argv[]){
 				mvprintw(y/2+6,x/2-40,"Aran: Very well then, let us have a honorable battle! Me and my Ice equipment are undefeated!");
 				press();
 			}else if(vs==3){
-				pj->earn(700);
+				pj->earn(800);
 				mvprintw(y/2,x/2-40,"Aran: Hng! You are a master of the sword...but you are far too late...Priest Owain will be...");
 				press();
 				mvprintw(y/2+2,x/2-40,"Shie: No, I must save the Priest! Hang on, I'm coming!");
@@ -930,8 +938,8 @@ void heal(soldado* pj){
 int menu(){
 	attron(COLOR_PAIR(2));
 	mvprintw(3,0,"*****************");
-	mvprintw(4,0,"* 1- Atacar     *");
-	mvprintw(5,0,"* 2- Inventario *");
+	mvprintw(4,0,"* 1- Atack      *");
+	mvprintw(5,0,"* 2- Inventory  *");
 	mvprintw(6,0,"*               *");
 	mvprintw(7,0,"*****************");	
 	attroff(COLOR_PAIR(2));
@@ -958,10 +966,11 @@ void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop,int* datosShop)
 			attron(COLOR_PAIR(4));
 			mvprintw(y/2-5,x/2-30,"*         -Krast City-          *");
 		}else if(vs==3){
-			attron(COLOR_PAIR(1));
+			attron(COLOR_PAIR(4));
 			mvprintw(y/2-5,x/2-30,"*         -Krast City-          *");
 		}else{
-			attron(COLOR_PAIR(6));
+			attron(COLOR_PAIR(1));
+			mvprintw(y/2-5,x/2-30,"*         -Last City-           *");
 		}
 		mvprintw(y/2-6,x/2-30,"*********************************");
 		
@@ -973,25 +982,26 @@ void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop,int* datosShop)
 		mvprintw(y/2,x/2-30,"*  5.- Item Shop                *");
 		mvprintw(y/2+1,x/2-30,"*  6.- Save Game                *");
 		mvprintw(y/2+2,x/2-30,"*  7.- Leave Town (Fight)       *");
-		mvprintw(y/2+3,x/2-30,"*********************************");
+		mvprintw(y/2+3,x/2-30,"*  8.- Quit game                *");
+		mvprintw(y/2+4,x/2-30,"*********************************");
 		if(vs==1){
 			attroff(COLOR_PAIR(3));
 		}else if(vs==2){
 			attroff(COLOR_PAIR(4));
 		}else if(vs==3){
-			attroff(COLOR_PAIR(1));
+			attroff(COLOR_PAIR(4));
 		}else{
-			attroff(COLOR_PAIR(6));
+			attroff(COLOR_PAIR(1));
 		}
 		int key;
 		bool input=false;
 		while(!input){
 			key=getch();
-			if(key==49||key==50||key==51||key==52||key==53||key==54||key==55){
+			if(key==49||key==50||key==51||key==52||key==53||key==54||key==55||key==56){
 				input=true;
 			}
 		}
-		int op=chartoint(key);
+		int op=key-48;
 		ClearScreen(y,x);
 		if(op==1){
 			if(pj->getMoney()>=100){
@@ -1197,6 +1207,10 @@ void pueblo(int& y,int& x,soldado* pj,int vs,vector<item*>& shop,int* datosShop)
 			}
 		}else if(op==7){
 			town=false;
+		}else if(op==8){
+			erase();
+			delete pj;
+			exit(0);
 		}
 	
 	}	

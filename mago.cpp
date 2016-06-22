@@ -3,6 +3,7 @@
 #include "robe.h"
 #include "soldado.h"
 #include "magia.h"
+#include "espadachin.h"
 #include<sstream>
 #include<cstdlib>
 #include<typeinfo>
@@ -21,6 +22,10 @@ bool mago::atacar(soldado* enemy,int hit){
         int chance=rand()%101;
 	if(typeid(*enemy)==typeid(mago)){
 		hit-=10;
+	}else if(typeid(*enemy)==typeid(espadachin)){
+		hit-=20;
+	}else{
+		hit-=5;
 	}
 	if(chance<=hit){//poli: El hit% si afecta al momento de calcular si el golpe conecta o falla
                 double dmg=this->weapon->getDamage();
